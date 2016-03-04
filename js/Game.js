@@ -27,6 +27,12 @@ HandFoot.Game = function (game) {
 };
 
 BasicGame.Game.prototype = {
+HandFoot.Game.prototype = {
+
+  preload: function() {
+    this.load.spritesheet("hand", "assets/img/hand-sheet.png", 64, 64, 3, 2, 2);
+    this.load.spritesheet("foot", "assets/img/foot-sheet.png", 64, 64, 3, 2, 2);
+  },
 
   create: function () {
 
