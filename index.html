@@ -4,14 +4,23 @@
 	<meta charset="UTF-8" />
 	<title>Hand-Foot-Eye Coordination</title>
 	<script src="js/phaser.min.js"></script>
-	<script src="js/Boot.js"></script>
-	<script src="js/Preloader.js"></script>
-	<script src="js/MainMenu.js"></script>
 	<script src="js/Game.js"></script>
 </head>
 <body>
 
 <div id="gameContainer"></div>
+
+<script>
+	window.onload = function() {
+
+		var game = new Phaser.Game(480, 640, Phaser.AUTO, 'gameContainer');
+
+		game.state.add('Game', HandFoot.Game);
+
+		game.state.start('Game');
+
+	};
+</script>
 
 </body>
 </html>
