@@ -24,9 +24,12 @@ HandFoot.Game = function (game) {
     //  You can use any of these from any function within this State.
     //  But do consider them as being 'reserved words', i.e. don't create a property for your own game called "world" or you'll over-write the world reference.
 
+    this.hand;
+    this.foot;
+    this.cursors;
+
 };
 
-BasicGame.Game.prototype = {
 HandFoot.Game.prototype = {
 
   preload: function() {
@@ -36,21 +39,25 @@ HandFoot.Game.prototype = {
 
   create: function () {
 
+    this.hand = this.add.sprite(this.world.width/8, this.world.height-50, "hand");
+    this.hand.anchor.setTo(0.5);
+
+    this.foot = this.add.sprite(this.world.width*5/8, this.world.height-50, "foot");
+    this.foot.anchor.setTo(0.5);
+
+    this.cursors = this.input.keyboard.createCursorKeys();
+    console.log(this.cursors);
 
   },
 
   update: function () {
 
+    this.movePlayers();
+
 
   },
 
-  quitGame: function (pointer) {
-
-    //  Here you should destroy anything you no longer need.
-    //  Stop music, delete sprites, purge caches, free resources, all that good stuff.
-
-    //  Then let's go back to the main menu.
-    this.state.start('MainMenu');
+  movePlayers: function(){
 
   }
 
