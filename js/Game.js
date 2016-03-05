@@ -79,6 +79,10 @@ HandFoot.Game.prototype = {
     this.footies.setAll("anchor.y", 0.5);
     this.footies.setAll("checkWorldBounds", true);
     this.footies.setAll("outOfBoundsKill", true);
+
+    this.time.events.loop(1500, this.dropItems, this, "hand");
+    this.time.events.loop(1500, this.dropItems, this, "foot");
+
   },
 
   update: function () {
@@ -115,7 +119,6 @@ HandFoot.Game.prototype = {
         this.foot.x = this.foot.leftPosition;
       }
     }, this);
-  }
   },
 
   scorePoints: function(player, item){
@@ -131,4 +134,13 @@ HandFoot.Game.prototype = {
     item.kill();
     console.log("Ouch!");
   },
+
+  dropItems: function(side){
+    var xPos = this.rnd.pick([
+      this[side].leftPosition,
+      this[side].rightPosition
+    ]);
+    var item = this[this.rnd.pick(["handies", "footies"])]
+      .getFirstExists(false, false, xPos, 32);
+  }
 };
