@@ -63,7 +63,22 @@ HandFoot.Game.prototype = {
 
     this.setupMotion();
 
+    this.handies = this.add.group();
+    this.handies.enableBody = true;
+    this.handies.createMultiple(5, "basketball");
+    this.handies.setAll("anchor.x", 0.5);
+    this.handies.setAll("anchor.y", 0.5);
+    this.handies.setAll("checkWorldBounds", true);
+    this.handies.setAll("outOfBoundsKill", true);
 
+
+    this.footies = this.add.group();
+    this.footies.enableBody = true;
+    this.footies.createMultiple(5, "football");
+    this.footies.setAll("anchor.x", 0.5);
+    this.footies.setAll("anchor.y", 0.5);
+    this.footies.setAll("checkWorldBounds", true);
+    this.footies.setAll("outOfBoundsKill", true);
   },
 
   update: function () {
