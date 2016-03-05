@@ -43,30 +43,16 @@ HandFoot.Game.prototype = {
 
     this.hand = this.add.sprite(this.world.width/8, this.world.height-50, "hand");
     this.hand.anchor.setTo(0.5);
+    this.hand.leftPosition = this.world.width*1/8;
+    this.hand.rightPosition = this.world.width*3/8;
 
     this.foot = this.add.sprite(this.world.width*5/8, this.world.height-50, "foot");
     this.foot.anchor.setTo(0.5);
+    this.foot.leftPosition = this.world.width*5/8;
+    this.foot.rightPosition = this.world.width*7/8;
 
-    this.cursors = this.input.keyboard.createCursorKeys();
+    this.setupMotion();
 
-    this.cursors.left.onDown.add(function(){
-      console.log("Left pressed!");
-      if(this.hand.x < this.world.width*2/8){
-        this.hand.x = this.world.width*3/8;
-      }
-      else {
-        this.hand.x = this.world.width*1/8;
-      }
-    }, this);
-    this.cursors.right.onDown.add(function(){
-      console.log("Right pressed!");
-      if(this.foot.x < this.world.width*6/8){
-        this.foot.x = this.world.width*7/8;
-      }
-      else {
-        this.foot.x = this.world.width*5/8;
-      }
-    }, this);
 
   },
 
@@ -74,6 +60,33 @@ HandFoot.Game.prototype = {
 
 
   },
+
+  setupMotion: function(){
+    this.cursors = this.input.keyboard.createCursorKeys();
+
+
+    ////// LEFT KEY
+    this.cursors.left.onDown.add(function(){
+      console.log("Left pressed!");
+      if(this.hand.x === this.hand.leftPosition){
+        this.hand.x = this.hand.rightPosition;
+      }
+      else {
+        this.hand.x = this.hand.leftPosition;
+      }
+    }, this);
+
+    ////// RIGHT KEY
+    this.cursors.right.onDown.add(function(){
+      console.log("Right pressed!");
+      if(this.foot.x === this.foot.leftPosition){
+        this.foot.x = this.foot.rightPosition;
+      }
+      else {
+        this.foot.x = this.foot.leftPosition;
+      }
+    }, this);
+  }
 
 
 };
