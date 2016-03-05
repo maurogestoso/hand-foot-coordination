@@ -46,19 +46,32 @@ HandFoot.Game.prototype = {
     this.foot.anchor.setTo(0.5);
 
     this.cursors = this.input.keyboard.createCursorKeys();
-    console.log(this.cursors);
+
+    this.cursors.left.onDown.add(function(){
+      console.log("Left pressed!");
+      if(this.hand.x < this.world.width*2/8){
+        this.hand.x = this.world.width*3/8;
+      }
+      else {
+        this.hand.x = this.world.width*1/8;
+      }
+    }, this);
+    this.cursors.right.onDown.add(function(){
+      console.log("Right pressed!");
+      if(this.foot.x < this.world.width*6/8){
+        this.foot.x = this.world.width*7/8;
+      }
+      else {
+        this.foot.x = this.world.width*5/8;
+      }
+    }, this);
 
   },
 
   update: function () {
 
-    this.movePlayers();
-
 
   },
 
-  movePlayers: function(){
-
-  }
 
 };
