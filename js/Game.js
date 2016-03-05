@@ -35,6 +35,8 @@ HandFoot.Game.prototype = {
   preload: function() {
     this.load.spritesheet("hand", "assets/img/hand-sheet.png", 64, 64, 3, 2, 2);
     this.load.spritesheet("foot", "assets/img/foot-sheet.png", 64, 64, 3, 2, 2);
+    this.load.image("football", "assets/img/football.png");
+    this.load.image("basketball", "assets/img/basketball.png");
   },
 
   create: function () {
