@@ -32,6 +32,10 @@ HandFoot.Game = function (game) {
 
 HandFoot.Game.prototype = {
 
+  init: function(){
+    this.physics.startSystem(Phaser.Physics.ARCADE);
+    this.physics.arcade.gravity.y = 300;
+  },
   preload: function() {
     this.load.spritesheet("hand", "assets/img/hand-sheet.png", 64, 64, 3, 2, 2);
     this.load.spritesheet("foot", "assets/img/foot-sheet.png", 64, 64, 3, 2, 2);
@@ -47,11 +51,15 @@ HandFoot.Game.prototype = {
     this.hand.anchor.setTo(0.5);
     this.hand.leftPosition = this.world.width*1/8;
     this.hand.rightPosition = this.world.width*3/8;
+    this.physics.arcade.enableBody(this.hand);
+    this.hand.body.allowGravity = false;
 
     this.foot = this.add.sprite(this.world.width*5/8, this.world.height-50, "foot");
     this.foot.anchor.setTo(0.5);
     this.foot.leftPosition = this.world.width*5/8;
     this.foot.rightPosition = this.world.width*7/8;
+    this.physics.arcade.enableBody(this.foot);
+    this.foot.body.allowGravity = false;
 
     this.setupMotion();
 
