@@ -82,7 +82,11 @@ HandFoot.Game.prototype = {
   },
 
   update: function () {
+    this.physics.arcade.overlap(this.hand, this.handies, this.scorePoints, null, this);
+    this.physics.arcade.overlap(this.hand, this.footies, this.damagePlayer, null, this);
 
+    this.physics.arcade.overlap(this.foot, this.handies, this.damagePlayer, null, this);
+    this.physics.arcade.overlap(this.foot, this.footies, this.scorePoints, null, this);
 
   },
 
@@ -112,6 +116,19 @@ HandFoot.Game.prototype = {
       }
     }, this);
   }
+  },
 
+  scorePoints: function(player, item){
+    // player is either this.hand or this.foot
+    // item is either a member of handies or footies
+    item.kill();
+    console.log("Score points!");
+  },
 
+  damagePlayer: function(player, item){
+    // player is either this.hand or this.foot
+    // item is either a member of handies or footies
+    item.kill();
+    console.log("Ouch!");
+  },
 };
