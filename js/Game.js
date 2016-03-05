@@ -33,9 +33,14 @@ HandFoot.Game = function (game) {
 HandFoot.Game.prototype = {
 
   init: function(){
+    //this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    this.scale.pageAlignHorizontally = true;
+    this.scale.pageAlignVertically = true;
+
     this.physics.startSystem(Phaser.Physics.ARCADE);
     this.physics.arcade.gravity.y = 300;
   },
+
   preload: function() {
     this.load.spritesheet("hand", "assets/img/hand-sheet.png", 64, 64, 3, 2, 2);
     this.load.spritesheet("foot", "assets/img/foot-sheet.png", 64, 64, 3, 2, 2);
