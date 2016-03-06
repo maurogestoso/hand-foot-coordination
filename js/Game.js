@@ -73,7 +73,8 @@ HandFoot.Game.prototype = {
     this.handies.setAll("anchor.y", 0.5);
     this.handies.setAll("checkWorldBounds", true);
     this.handies.setAll("outOfBoundsKill", true);
-
+    this.handies.setAll("allowGravity", false);
+    this.handies.setAll("body.velocity.y", 50);
 
     this.footies = this.add.group();
     this.footies.enableBody = true;
@@ -82,9 +83,11 @@ HandFoot.Game.prototype = {
     this.footies.setAll("anchor.y", 0.5);
     this.footies.setAll("checkWorldBounds", true);
     this.footies.setAll("outOfBoundsKill", true);
+    this.footies.setAll("allowGravity", false);
+    this.footies.setAll("body.velocity.y", 50);
 
-    this.time.events.loop(1500, this.dropItems, this, "hand");
-    this.time.events.loop(1500, this.dropItems, this, "foot");
+    this.time.events.loop(1000, this.dropItems, this, "hand");
+    this.time.events.loop(1000, this.dropItems, this, "foot");
 
   },
 
