@@ -50,8 +50,6 @@ HandFoot.Game.prototype = {
 
   create: function () {
 
-    this.stage.backgroundColor = "#1166ff";
-
     this.hand = this.add.sprite(this.world.width/8, this.world.height-50, "hand");
     this.hand.anchor.setTo(0.5);
     this.hand.leftPosition = this.world.width*1/8;
