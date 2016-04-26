@@ -59,6 +59,10 @@ HandFoot.Game.prototype = {
     this.hand.rightPosition = this.world.width*3/8;
     this.physics.arcade.enableBody(this.hand);
     this.hand.body.allowGravity = false;
+    this.hand.custom = {
+      leftPos: this.world.width*1/8,
+      rightPos: this.world.width*3/8
+    };
 
     this.foot = this.add.sprite(this.world.width*5/8, this.world.height-50, "foot");
     this.foot.anchor.setTo(0.5);
@@ -66,16 +70,23 @@ HandFoot.Game.prototype = {
     this.foot.rightPosition = this.world.width*7/8;
     this.physics.arcade.enableBody(this.foot);
     this.foot.body.allowGravity = false;
-
-    this.setupMotion();
+    this.foot.custom = {
+      leftPos: this.world.width*5/8,
+      rightPos: this.world.width*7/8
+    };
 
     this.basketballs = this.initGroup("basketball");
+
     this.footballs = this.initGroup("football");
-
     this.time.events.loop(1500, this.dropItems, this, "hand");
-    this.time.events.loop(1500, this.dropItems, this, "foot");
 
+    this.time.events.loop(1500, this.dropItems, this, "foot");
     this.add.image(0, 0, "top-panel");
+
+    // cursor, #control
+    this.cursor = this.input.keyboard.createCursorKeys();
+    this.cursor.left.onDown.add(this.moveHand, this);
+    this.cursor.right.onDown.add(this.moveFoot, this);
   },
 
   update: function () {
@@ -86,6 +97,17 @@ HandFoot.Game.prototype = {
     this.physics.arcade.overlap(this.foot, this.footballs, this.scorePoints, null, this);
 
   },
+
+  moveHand: function(){
+    if(this.hand.x === this.hand.custom.leftPos) this.hand.x = this.hand.custom.rightPos;
+    else this.hand.x = this.hand.custom.leftPos;
+  },
+
+  moveFoot: function(){
+    if(this.foot.x === this.foot.custom.leftPos) this.foot.x = this.foot.custom.rightPos;
+    else this.foot.x = this.foot.custom.leftPos;
+  },
+
 
   setupMotion: function(){
     this.cursors = this.input.keyboard.createCursorKeys();
