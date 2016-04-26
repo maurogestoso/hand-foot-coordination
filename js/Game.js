@@ -108,34 +108,6 @@ HandFoot.Game.prototype = {
     else this.foot.x = this.foot.custom.leftPos;
   },
 
-
-  setupMotion: function(){
-    this.cursors = this.input.keyboard.createCursorKeys();
-
-
-    ////// LEFT KEY
-    this.cursors.left.onDown.add(function(){
-      console.log("Left pressed!");
-      if(this.hand.x === this.hand.leftPosition){
-        this.hand.x = this.hand.rightPosition;
-      }
-      else {
-        this.hand.x = this.hand.leftPosition;
-      }
-    }, this);
-
-    ////// RIGHT KEY
-    this.cursors.right.onDown.add(function(){
-      console.log("Right pressed!");
-      if(this.foot.x === this.foot.leftPosition){
-        this.foot.x = this.foot.rightPosition;
-      }
-      else {
-        this.foot.x = this.foot.leftPosition;
-      }
-    }, this);
-  },
-
   scorePoints: function(player, item){
     // player is either this.hand or this.foot
     // item is either a member of basketballs or footballs
