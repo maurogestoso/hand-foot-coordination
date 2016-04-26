@@ -42,6 +42,7 @@ HandFoot.Game.prototype = {
   },
 
   preload: function() {
+    // TODO hand and foot sprites are too big, maybe 48x48
     this.load.spritesheet("hand", "assets/img/hand-sheet.png", 64, 64, 3, 2, 2);
     this.load.spritesheet("foot", "assets/img/foot-sheet.png", 64, 64, 3, 2, 2);
     this.load.image("football", "assets/img/football.png");
@@ -53,6 +54,7 @@ HandFoot.Game.prototype = {
 
     this.stage.backgroundColor = "79bd9a";
 
+    //TODO create initPlayerPart
     this.hand = this.add.sprite(this.world.width/8, this.world.height-50, "hand");
     this.hand.anchor.setTo(0.5);
     this.hand.leftPosition = this.world.width*1/8;
@@ -113,7 +115,8 @@ HandFoot.Game.prototype = {
       }
     }, this);
   },
-
+  
+  //TODO refactor into handleCollision
   scorePoints: function(player, item){
     // player is either this.hand or this.foot
     // item is either a member of basketballs or footballs
