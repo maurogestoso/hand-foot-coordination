@@ -69,24 +69,8 @@ HandFoot.Game.prototype = {
 
     this.setupMotion();
 
-    this.handies = this.add.group();
-    this.handies.enableBody = true;
-    this.handies.createMultiple(10, "basketball");
-    this.handies.setAll("anchor.x", 0.5);
-    this.handies.setAll("anchor.y", 0.5);
-    this.handies.setAll("checkWorldBounds", true);
-    this.handies.setAll("outOfBoundsKill", true);
-    this.handies.setAll("allowGravity", false);
-    this.handies.setAll("body.velocity.y", 50);
-
-    this.footies = this.add.group();
-    this.footies.enableBody = true;
-    this.footies.createMultiple(10, "football");
-    this.footies.setAll("anchor.x", 0.5);
-    this.footies.setAll("anchor.y", 0.5);
-    this.footies.setAll("checkWorldBounds", true);
-    this.footies.setAll("outOfBoundsKill", true);
-    this.footies.setAll("body.allowGravity", false);
+    this.basketballs = this.initGroup("basketball");
+    this.footballs = this.initGroup("football");
 
     this.time.events.loop(1500, this.dropItems, this, "hand");
     this.time.events.loop(1500, this.dropItems, this, "foot");
@@ -95,11 +79,11 @@ HandFoot.Game.prototype = {
   },
 
   update: function () {
-    this.physics.arcade.overlap(this.hand, this.handies, this.scorePoints, null, this);
-    this.physics.arcade.overlap(this.hand, this.footies, this.damagePlayer, null, this);
+    this.physics.arcade.overlap(this.hand, this.basketballs, this.scorePoints, null, this);
+    this.physics.arcade.overlap(this.hand, this.footballs, this.damagePlayer, null, this);
 
-    this.physics.arcade.overlap(this.foot, this.handies, this.damagePlayer, null, this);
-    this.physics.arcade.overlap(this.foot, this.footies, this.scorePoints, null, this);
+    this.physics.arcade.overlap(this.foot, this.basketballs, this.damagePlayer, null, this);
+    this.physics.arcade.overlap(this.foot, this.footballs, this.scorePoints, null, this);
 
   },
 
@@ -132,14 +116,14 @@ HandFoot.Game.prototype = {
 
   scorePoints: function(player, item){
     // player is either this.hand or this.foot
-    // item is either a member of handies or footies
+    // item is either a member of basketballs or footballs
     item.kill();
     console.log("Score points!");
   },
 
   damagePlayer: function(player, item){
     // player is either this.hand or this.foot
-    // item is either a member of handies or footies
+    // item is either a member of basketballs or footballs
     item.kill();
     console.log("Ouch!");
   },
@@ -149,8 +133,21 @@ HandFoot.Game.prototype = {
       this[side].leftPosition,
       this[side].rightPosition
     ]);
-    var item = this[this.rnd.pick(["handies", "footies"])]
+    var item = this[this.rnd.pick(["basketballs", "footballs"])]
       .getFirstExists(false, true, xPos, 16);
     item.body.velocity.y = 100;
+  },
+
+  initGroup: function(key){
+    var newGroup = this.add.group();
+    newGroup.enableBody = true;
+    newGroup.createMultiple(10, key);
+    newGroup.setAll("anchor.x", 0.5);
+    newGroup.setAll("anchor.y", 0.5);
+    newGroup.setAll("checkWorldBounds", true);
+    newGroup.setAll("outOfBoundsKill", true);
+    newGroup.setAll("allowGravity", false);
+    newGroup.setAll("body.velocity.y", 50);
+    return newGroup;
   }
 };
