@@ -53,29 +53,9 @@ HandFoot.Game.prototype = {
   create: function () {
 
     this.stage.backgroundColor = "79bd9a";
-
-    //TODO create initPlayerPart
-    this.hand = this.add.sprite(this.world.width/8, this.world.height-50, "hand");
-    this.hand.anchor.setTo(0.5);
-    this.hand.leftPosition = this.world.width*1/8;
-    this.hand.rightPosition = this.world.width*3/8;
-    this.physics.arcade.enableBody(this.hand);
-    this.hand.body.allowGravity = false;
-    this.hand.custom = {
-      leftPos: this.world.width*1/8,
-      rightPos: this.world.width*3/8
-    };
-
-    this.foot = this.add.sprite(this.world.width*5/8, this.world.height-50, "foot");
-    this.foot.anchor.setTo(0.5);
-    this.foot.leftPosition = this.world.width*5/8;
-    this.foot.rightPosition = this.world.width*7/8;
-    this.physics.arcade.enableBody(this.foot);
-    this.foot.body.allowGravity = false;
-    this.foot.custom = {
-      leftPos: this.world.width*5/8,
-      rightPos: this.world.width*7/8
-    };
+    
+    this.hand = this.initPlayerPart("hand");
+    this.foot = this.initPlayerPart("foot");
 
     this.basketballs = this.initGroup("basketball");
 
@@ -98,6 +78,24 @@ HandFoot.Game.prototype = {
     this.physics.arcade.overlap(this.foot, this.basketballs, this.damagePlayer, null, this);
     this.physics.arcade.overlap(this.foot, this.footballs, this.scorePoints, null, this);
 
+  },
+  
+  initPlayerPart: function(key){
+    var newPart = this.add.sprite(0, 0, key);
+    this.physics.arcade.enableBody(newPart);
+    newPart.body.allowGravity = false;
+    newPart.anchor.setTo(0.5);
+    newPart.custom = {};
+    if(key === "hand"){
+      newPart.custom.leftPos = this.world.width*1/8;
+      newPart.custom.rightPos = this.world.width*3/8;
+    }
+    else if (key === "foot"){
+      newPart.custom.leftPos = this.world.width*5/8;
+      newPart.custom.rightPos = this.world.width*7/8;
+    }
+    newPart.reset(newPart.custom.leftPos, this.world.height-32);
+    return newPart;
   },
 
   moveHand: function(){
