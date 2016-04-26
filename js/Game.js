@@ -125,8 +125,8 @@ HandFoot.Game.prototype = {
 
   dropItems: function(side){
     var xPos = this.rnd.pick([
-      this[side].leftPosition,
-      this[side].rightPosition
+      this[side].custom.leftPos,
+      this[side].custom.rightPos
     ]);
     var item = this[this.rnd.pick(["basketballs", "footballs"])]
       .getFirstExists(false, true, xPos, 16);
