@@ -38,7 +38,7 @@ HandFoot.Game.prototype = {
     this.scale.pageAlignVertically = true;
 
     this.physics.startSystem(Phaser.Physics.ARCADE);
-    this.physics.arcade.gravity.y = 300;
+    this.physics.arcade.gravity.y = 0;
   },
 
   preload: function() {
@@ -46,9 +46,12 @@ HandFoot.Game.prototype = {
     this.load.spritesheet("foot", "assets/img/foot-sheet.png", 64, 64, 3, 2, 2);
     this.load.image("football", "assets/img/football.png");
     this.load.image("basketball", "assets/img/basketball.png");
+    this.load.image("top-panel", "assets/img/top-panel.png");
   },
 
   create: function () {
+
+    this.stage.backgroundColor = "79bd9a";
 
     this.hand = this.add.sprite(this.world.width/8, this.world.height-50, "hand");
     this.hand.anchor.setTo(0.5);
@@ -68,7 +71,7 @@ HandFoot.Game.prototype = {
 
     this.handies = this.add.group();
     this.handies.enableBody = true;
-    this.handies.createMultiple(5, "basketball");
+    this.handies.createMultiple(10, "basketball");
     this.handies.setAll("anchor.x", 0.5);
     this.handies.setAll("anchor.y", 0.5);
     this.handies.setAll("checkWorldBounds", true);
@@ -78,17 +81,17 @@ HandFoot.Game.prototype = {
 
     this.footies = this.add.group();
     this.footies.enableBody = true;
-    this.footies.createMultiple(5, "football");
+    this.footies.createMultiple(10, "football");
     this.footies.setAll("anchor.x", 0.5);
     this.footies.setAll("anchor.y", 0.5);
     this.footies.setAll("checkWorldBounds", true);
     this.footies.setAll("outOfBoundsKill", true);
-    this.footies.setAll("allowGravity", false);
-    this.footies.setAll("body.velocity.y", 50);
+    this.footies.setAll("body.allowGravity", false);
 
-    this.time.events.loop(1000, this.dropItems, this, "hand");
-    this.time.events.loop(1000, this.dropItems, this, "foot");
+    this.time.events.loop(1500, this.dropItems, this, "hand");
+    this.time.events.loop(1500, this.dropItems, this, "foot");
 
+    this.add.image(0, 0, "top-panel");
   },
 
   update: function () {
@@ -147,6 +150,7 @@ HandFoot.Game.prototype = {
       this[side].rightPosition
     ]);
     var item = this[this.rnd.pick(["handies", "footies"])]
-      .getFirstExists(false, false, xPos, 32);
+      .getFirstExists(false, true, xPos, 16);
+    item.body.velocity.y = 100;
   }
 };
