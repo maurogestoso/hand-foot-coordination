@@ -150,8 +150,8 @@ HandFoot.Game.prototype = {
   scorePoints: function (playerPart) {
     console.log("Score points!");
     this.score += this.chain[playerPart.key] * 10;
+    this.scoreLabel.text = "score: " + this.score;
     this.increaseChain(playerPart.key);
-
   },
 
   damagePlayer: function (playerPart) {
@@ -165,11 +165,13 @@ HandFoot.Game.prototype = {
       this.chain[playerPart]++;
       this.chainCount[playerPart] = 0;
     }
+    this[playerPart+"ChainLabel"].text = "x" + this.chain[playerPart];
   },
 
   resetChain: function(playerPart){
     this.chain[playerPart] = 1;
     this.chainCount[playerPart] = 0;
+    this[playerPart+"ChainLabel"].text = "x" + this.chain[playerPart];
   },
 
   dropItemOnSide: function (key) {
