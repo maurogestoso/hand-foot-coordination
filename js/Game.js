@@ -190,6 +190,12 @@ HandFoot.Game.prototype = {
     newGroup.setAll("checkWorldBounds", true);
     newGroup.setAll("outOfBoundsKill", true);
     newGroup.setAll("allowGravity", false);
+
+    // set onOutOfBounds listener on all items
+    newGroup.forEach(function(item){
+      item.events.onOutOfBounds.add(this.handleItemOutOfBounds, this);
+    }, this);
+
     return newGroup;
   },
   
@@ -201,6 +207,14 @@ HandFoot.Game.prototype = {
     if(this.nextFootItem < this.time.now){
       this.dropItemOnSide("foot");
       this.nextFootItem = this.time.now + this.delay;
+    }
+  },
+
+  handleItemOutOfBounds: function(item) {
+    if((item.key === "basketball" &&  item.x < this.world.centerX) ||
+       (item.key === "football"   &&  item.x > this.world.centerX)) {
+      console.log("Out of bounds chain reset!");
+      this.resetChain(item.key === "basketball" ? "hand" : "foot");
     }
   }
 };
