@@ -62,6 +62,8 @@ HandFoot.Game.prototype = {
     
     // UI
     this.add.image(0, 0, "top-panel");
+    var textStyle = { font: '18px Arial', fill: '#ffffff' };
+    this.scoreLabel = this.add.text(30, 30, 'score: 0', textStyle);
 
     // cursor, #control
     this.cursor = this.input.keyboard.createCursorKeys();
