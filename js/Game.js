@@ -70,13 +70,16 @@ HandFoot.Game.prototype = {
       hand: 0,
       foot: 0
     };
-    
+
     // UI
     this.add.image(0, 0, "top-panel");
     var textStyle = { font: '18px Arial', fill: '#ffffff' };
-    this.scoreLabel = this.add.text(30, 30, 'score: 0', textStyle);
-    this.handChainLabel = this.add.text(30, 60, "x1", textStyle);
-    this.footChainLabel = this.add.text(30+this.world.width/2, 60, "x1", textStyle);
+    this.scoreLabel = this.add.text(this.world.centerX, 30, 'score: 0', textStyle);
+    this.scoreLabel.anchor.setTo(0.5);
+    this.handChainLabel = this.add.text(this.world.width/4, 80, "x1", textStyle);
+    this.handChainLabel.anchor.setTo(0.5);
+    this.footChainLabel = this.add.text(this.world.width*3/4, 80, "x1", textStyle);
+    this.footChainLabel.anchor.setTo(0.5);
 
     // cursor, #control
     this.cursor = this.input.keyboard.createCursorKeys();
