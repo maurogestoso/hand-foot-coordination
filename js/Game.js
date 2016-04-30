@@ -59,11 +59,24 @@ HandFoot.Game.prototype = {
 
     this.basketballs = this.initGroup("basketball");
     this.footballs = this.initGroup("football");
+
+    // score / chain
+    this.score = 0;
+    this.chain = {
+      hand: 1,
+      foot: 1
+    };
+    this.chainCount = {
+      hand: 0,
+      foot: 0
+    };
     
     // UI
     this.add.image(0, 0, "top-panel");
     var textStyle = { font: '18px Arial', fill: '#ffffff' };
     this.scoreLabel = this.add.text(30, 30, 'score: 0', textStyle);
+    this.handChainLabel = this.add.text(30, 60, "x1", textStyle);
+    this.footChainLabel = this.add.text(30+this.world.width/2, 60, "x1", textStyle);
 
     // cursor, #control
     this.cursor = this.input.keyboard.createCursorKeys();
@@ -80,17 +93,17 @@ HandFoot.Game.prototype = {
 
   update: function () {
     // collisions
-    this.physics.arcade.overlap(this.hand, this.basketballs, this.scorePoints, null, this);
-    this.physics.arcade.overlap(this.hand, this.footballs, this.damagePlayer, null, this);
-    this.physics.arcade.overlap(this.foot, this.basketballs, this.damagePlayer, null, this);
-    this.physics.arcade.overlap(this.foot, this.footballs, this.scorePoints, null, this);
+    this.physics.arcade.overlap(this.hand, this.basketballs, this.handleOverlap, null, this);
+    this.physics.arcade.overlap(this.hand, this.footballs, this.handleOverlap, null, this);
+    this.physics.arcade.overlap(this.foot, this.basketballs, this.handleOverlap, null, this);
+    this.physics.arcade.overlap(this.foot, this.footballs, this.handleOverlap, null, this);
     
     // create items
     this.dropItemsTimer();
 
   },
   
-  initPlayerPart: function(key){
+  initPlayerPart: function (key) {
     var newPart = this.add.sprite(0, 0, key);
     this.physics.arcade.enableBody(newPart);
     newPart.body.allowGravity = false;
@@ -99,49 +112,71 @@ HandFoot.Game.prototype = {
     if(key === "hand"){
       newPart.custom.leftPos = this.world.width*1/8;
       newPart.custom.rightPos = this.world.width*3/8;
+      newPart.custom.killedBy = "football";
     }
     else if (key === "foot"){
       newPart.custom.leftPos = this.world.width*5/8;
       newPart.custom.rightPos = this.world.width*7/8;
+      newPart.custom.killedBy = "basketball";
     }
     newPart.reset(newPart.custom.leftPos, this.world.height-32);
     return newPart;
   },
 
-  moveHand: function(){
+  moveHand: function () {
     if(this.hand.x === this.hand.custom.leftPos) this.hand.x = this.hand.custom.rightPos;
     else this.hand.x = this.hand.custom.leftPos;
   },
 
-  moveFoot: function(){
+  moveFoot: function () {
     if(this.foot.x === this.foot.custom.leftPos) this.foot.x = this.foot.custom.rightPos;
     else this.foot.x = this.foot.custom.leftPos;
   },
-  
-  //TODO refactor into handleCollision
-  scorePoints: function(player, item){
-    // player is either this.hand or this.foot
-    // item is either a member of basketballs or footballs
+
+  handleOverlap: function (playerPart, item) {
+    console.log(playerPart.key + ' touched a ' + item.key);
     item.kill();
+    if(playerPart.custom.killedBy === item.key){
+      this.damagePlayer(playerPart);
+    }
+    else {
+      this.scorePoints(playerPart);
+    }
+  },
+
+  scorePoints: function (playerPart) {
     console.log("Score points!");
+    this.score += this.chain[playerPart.key] * 10;
+    this.increaseChain(playerPart.key);
+
   },
 
-  damagePlayer: function(player, item){
-    // player is either this.hand or this.foot
-    // item is either a member of basketballs or footballs
-    item.kill();
+  damagePlayer: function (playerPart) {
     console.log("Ouch!");
+    this.resetChain(playerPart.key)
   },
 
-  dropItemOnSide: function(key){
+  increaseChain: function(playerPart){
+    this.chainCount[playerPart]++;
+    if(this.chainCount[playerPart] === 5){
+      this.chain[playerPart]++;
+      this.chainCount[playerPart] = 0;
+    }
+  },
+
+  resetChain: function(playerPart){
+    this.chain[playerPart] = 1;
+    this.chainCount[playerPart] = 0;
+  },
+
+  dropItemOnSide: function (key) {
     var xPos = this.rnd.pick([this[key].custom.leftPos, this[key].custom.rightPos]);
     var itemGroup = this.rnd.pick(["basketballs", "footballs"]);
     var item = this[itemGroup].getFirstExists(false, true, xPos, 16);
-    console.log(item);
     item.body.velocity.y = 100;
   },
 
-  initGroup: function(key){
+  initGroup: function (key) {
     var newGroup = this.add.group();
     newGroup.enableBody = true;
     newGroup.createMultiple(10, key);
@@ -153,14 +188,12 @@ HandFoot.Game.prototype = {
     return newGroup;
   },
   
-  dropItemsTimer: function(){
+  dropItemsTimer: function () {
     if(this.nextHandItem < this.time.now){
-      console.log("new hand item!");
       this.dropItemOnSide("hand");
       this.nextHandItem = this.time.now + this.delay;
     }
     if(this.nextFootItem < this.time.now){
-      console.log("new foot item!");
       this.dropItemOnSide("foot");
       this.nextFootItem = this.time.now + this.delay;
     }
