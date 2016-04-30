@@ -33,7 +33,6 @@ HandFoot.Game = function (game) {
 HandFoot.Game.prototype = {
 
   init: function(){
-    //this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     this.scale.pageAlignHorizontally = true;
     this.scale.pageAlignVertically = true;
 
@@ -54,29 +53,38 @@ HandFoot.Game.prototype = {
 
     this.stage.backgroundColor = "79bd9a";
     
+    // sprites
     this.hand = this.initPlayerPart("hand");
     this.foot = this.initPlayerPart("foot");
 
     this.basketballs = this.initGroup("basketball");
-
     this.footballs = this.initGroup("football");
-    this.time.events.loop(1500, this.dropItems, this, "hand");
-
-    this.time.events.loop(1500, this.dropItems, this, "foot");
+    
+    // UI
     this.add.image(0, 0, "top-panel");
 
     // cursor, #control
     this.cursor = this.input.keyboard.createCursorKeys();
     this.cursor.left.onDown.add(this.moveHand, this);
     this.cursor.right.onDown.add(this.moveFoot, this);
+
+    // time / difficulty
+    this.offset = 800;
+    this.delay = 2200;
+    this.nextHandItem = 0;
+    this.nextFootItem = this.offset;
+
   },
 
   update: function () {
+    // collisions
     this.physics.arcade.overlap(this.hand, this.basketballs, this.scorePoints, null, this);
     this.physics.arcade.overlap(this.hand, this.footballs, this.damagePlayer, null, this);
-
     this.physics.arcade.overlap(this.foot, this.basketballs, this.damagePlayer, null, this);
     this.physics.arcade.overlap(this.foot, this.footballs, this.scorePoints, null, this);
+    
+    // create items
+    this.dropItemsTimer();
 
   },
   
@@ -123,13 +131,11 @@ HandFoot.Game.prototype = {
     console.log("Ouch!");
   },
 
-  dropItems: function(side){
-    var xPos = this.rnd.pick([
-      this[side].custom.leftPos,
-      this[side].custom.rightPos
-    ]);
-    var item = this[this.rnd.pick(["basketballs", "footballs"])]
-      .getFirstExists(false, true, xPos, 16);
+  dropItemOnSide: function(key){
+    var xPos = this.rnd.pick([this[key].custom.leftPos, this[key].custom.rightPos]);
+    var itemGroup = this.rnd.pick(["basketballs", "footballs"]);
+    var item = this[itemGroup].getFirstExists(false, true, xPos, 16);
+    console.log(item);
     item.body.velocity.y = 100;
   },
 
@@ -142,7 +148,19 @@ HandFoot.Game.prototype = {
     newGroup.setAll("checkWorldBounds", true);
     newGroup.setAll("outOfBoundsKill", true);
     newGroup.setAll("allowGravity", false);
-    newGroup.setAll("body.velocity.y", 50);
     return newGroup;
+  },
+  
+  dropItemsTimer: function(){
+    if(this.nextHandItem < this.time.now){
+      console.log("new hand item!");
+      this.dropItemOnSide("hand");
+      this.nextHandItem = this.time.now + this.delay;
+    }
+    if(this.nextFootItem < this.time.now){
+      console.log("new foot item!");
+      this.dropItemOnSide("foot");
+      this.nextFootItem = this.time.now + this.delay;
+    }
   }
 };
