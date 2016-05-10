@@ -71,6 +71,9 @@ HandFoot.Game.prototype = {
       foot: 0
     };
 
+    this.handChainCounters = this.initChainCounters("basketball");
+    this.footChainCounters = this.initChainCounters("football");
+
     // UI
     this.add.image(0, 0, "top-panel");
     var textStyle = { font: '18px Arial', fill: '#ffffff' };
@@ -105,7 +108,9 @@ HandFoot.Game.prototype = {
     this.dropItemsTimer();
 
   },
-  
+
+  // player parts
+
   initPlayerPart: function (key) {
     var newPart = this.add.sprite(0, 0, key);
     this.physics.arcade.enableBody(newPart);
@@ -136,6 +141,46 @@ HandFoot.Game.prototype = {
     else this.foot.x = this.foot.custom.leftPos;
   },
 
+  // items
+
+  initGroup: function (key) {
+    var newGroup = this.add.group();
+    newGroup.enableBody = true;
+    newGroup.createMultiple(10, key);
+    newGroup.setAll("anchor.x", 0.5);
+    newGroup.setAll("anchor.y", 0.5);
+    newGroup.setAll("checkWorldBounds", true);
+    newGroup.setAll("outOfBoundsKill", true);
+    newGroup.setAll("allowGravity", false);
+
+    // set onOutOfBounds listener on all items
+    newGroup.forEach(function(item){
+      item.events.onOutOfBounds.add(this.handleItemOutOfBounds, this);
+    }, this);
+
+    return newGroup;
+  },
+
+  dropItemsTimer: function () {
+    if(this.nextHandItem < this.time.now){
+      this.dropItemOnSide("hand");
+      this.nextHandItem = this.time.now + this.delay;
+    }
+    if(this.nextFootItem < this.time.now){
+      this.dropItemOnSide("foot");
+      this.nextFootItem = this.time.now + this.delay;
+    }
+  },
+
+  dropItemOnSide: function (key) {
+    var xPos = this.rnd.pick([this[key].custom.leftPos, this[key].custom.rightPos]);
+    var itemGroup = this.rnd.pick(["basketballs", "footballs"]);
+    var item = this[itemGroup].getFirstExists(false, true, xPos, 16);
+    item.body.velocity.y = 100;
+  },
+
+  // physics
+
   handleOverlap: function (playerPart, item) {
     console.log(playerPart.key + ' touched a ' + item.key);
     item.kill();
@@ -146,6 +191,16 @@ HandFoot.Game.prototype = {
       this.scorePoints(playerPart);
     }
   },
+
+  handleItemOutOfBounds: function(item) {
+    if((item.key === "basketball" &&  item.x < this.world.centerX) ||
+      (item.key === "football"   &&  item.x > this.world.centerX)) {
+      console.log("Out of bounds chain reset!");
+      this.resetChain(item.key === "basketball" ? "hand" : "foot");
+    }
+  },
+
+  // scoring
 
   scorePoints: function (playerPart) {
     console.log("Score points!");
@@ -174,47 +229,15 @@ HandFoot.Game.prototype = {
     this[playerPart+"ChainLabel"].text = "x" + this.chain[playerPart];
   },
 
-  dropItemOnSide: function (key) {
-    var xPos = this.rnd.pick([this[key].custom.leftPos, this[key].custom.rightPos]);
-    var itemGroup = this.rnd.pick(["basketballs", "footballs"]);
-    var item = this[itemGroup].getFirstExists(false, true, xPos, 16);
-    item.body.velocity.y = 100;
-  },
-
-  initGroup: function (key) {
-    var newGroup = this.add.group();
-    newGroup.enableBody = true;
-    newGroup.createMultiple(10, key);
-    newGroup.setAll("anchor.x", 0.5);
-    newGroup.setAll("anchor.y", 0.5);
-    newGroup.setAll("checkWorldBounds", true);
-    newGroup.setAll("outOfBoundsKill", true);
-    newGroup.setAll("allowGravity", false);
-
-    // set onOutOfBounds listener on all items
-    newGroup.forEach(function(item){
-      item.events.onOutOfBounds.add(this.handleItemOutOfBounds, this);
-    }, this);
-
-    return newGroup;
-  },
-  
-  dropItemsTimer: function () {
-    if(this.nextHandItem < this.time.now){
-      this.dropItemOnSide("hand");
-      this.nextHandItem = this.time.now + this.delay;
-    }
-    if(this.nextFootItem < this.time.now){
-      this.dropItemOnSide("foot");
-      this.nextFootItem = this.time.now + this.delay;
-    }
-  },
-
-  handleItemOutOfBounds: function(item) {
-    if((item.key === "basketball" &&  item.x < this.world.centerX) ||
-       (item.key === "football"   &&  item.x > this.world.centerX)) {
-      console.log("Out of bounds chain reset!");
-      this.resetChain(item.key === "basketball" ? "hand" : "foot");
+  // TODO: continue here
+  initChainCounters: function (key) {
+    var counter = this.add.image(0, 0, key);
+    // counter.kill();
+    counter.width = 25;
+    counter.height = 25;
+    var counterGroup = this.add.group();
+    for(var i = 0; i < 5; i++) {
+      counterGroup.add(counter);
     }
   }
 };
