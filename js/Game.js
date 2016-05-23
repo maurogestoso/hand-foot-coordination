@@ -47,6 +47,7 @@ HandFoot.Game.prototype = {
     this.load.image("football", "assets/img/football.png");
     this.load.image("basketball", "assets/img/basketball.png");
     this.load.image("top-panel", "assets/img/top-panel.png");
+    this.load.image("orange-block", "assets/img/orange-block.png");
   },
 
   create: function () {
@@ -67,22 +68,28 @@ HandFoot.Game.prototype = {
       foot: 1
     };
     this.chainCount = {
-      hand: 0,
-      foot: 0
+      hand: 1,
+      foot: 1
     };
-
-    this.handChainCounters = this.initChainCounters("basketball");
-    this.footChainCounters = this.initChainCounters("football");
 
     // UI
     this.add.image(0, 0, "top-panel");
     var textStyle = { font: '18px Arial', fill: '#ffffff' };
     this.scoreLabel = this.add.text(this.world.centerX, 30, 'score: 0', textStyle);
     this.scoreLabel.anchor.setTo(0.5);
-    this.handChainLabel = this.add.text(this.world.width/4, 80, "x1", textStyle);
-    this.handChainLabel.anchor.setTo(0.5);
-    this.footChainLabel = this.add.text(this.world.width*3/4, 80, "x1", textStyle);
-    this.footChainLabel.anchor.setTo(0.5);
+
+    this.chainLabel = {};
+    this.chainLabel.hand = this.add.text(this.world.width/4, 60, "x1", textStyle);
+    this.chainLabel.hand.anchor.setTo(0.5);
+    this.chainLabel.foot = this.add.text(this.world.width*3/4, 60, "x1", textStyle);
+    this.chainLabel.foot.anchor.setTo(0.5);
+
+    // Chain bars
+    this.chainBar = {};
+    this.chainBar.hand = this.add.image(25, 75, 'orange-block');
+    this.chainBar.hand.scale.setTo(0, 1);
+    this.chainBar.foot = this.add.image(this.world.centerX + 25, 75, 'orange-block');
+    this.chainBar.foot.scale.setTo(0, 1);
 
     // cursor, #control
     this.cursor = this.input.keyboard.createCursorKeys();
@@ -182,7 +189,6 @@ HandFoot.Game.prototype = {
   // physics
 
   handleOverlap: function (playerPart, item) {
-    console.log(playerPart.key + ' touched a ' + item.key);
     item.kill();
     if(playerPart.custom.killedBy === item.key){
       this.damagePlayer(playerPart);
@@ -195,7 +201,6 @@ HandFoot.Game.prototype = {
   handleItemOutOfBounds: function(item) {
     if((item.key === "basketball" &&  item.x < this.world.centerX) ||
       (item.key === "football"   &&  item.x > this.world.centerX)) {
-      console.log("Out of bounds chain reset!");
       this.resetChain(item.key === "basketball" ? "hand" : "foot");
     }
   },
@@ -203,41 +208,39 @@ HandFoot.Game.prototype = {
   // scoring
 
   scorePoints: function (playerPart) {
-    console.log("Score points!");
     this.score += this.chain[playerPart.key] * 10;
     this.scoreLabel.text = "score: " + this.score;
     this.increaseChain(playerPart.key);
   },
 
   damagePlayer: function (playerPart) {
-    console.log("Ouch!");
     this.resetChain(playerPart.key)
   },
 
-  increaseChain: function(playerPart){
-    this.chainCount[playerPart]++;
-    if(this.chainCount[playerPart] === 5){
-      this.chain[playerPart]++;
-      this.chainCount[playerPart] = 0;
+  increaseChain: function(key){
+    if(this.chain[key] === 4) return;
+
+    if (this.chainCount[key] < 5) {
+      this.chainCount[key]++;
+      this.chainBar[key].scale.x += 2;
     }
-    this[playerPart+"ChainLabel"].text = "x" + this.chain[playerPart];
+    else if(this.chainCount[key] === 5){
+      this.chain[key]++;
+      this.chainCount[key] = 1;
+      if (this.chain[key] < 4) {
+        this.chainBar[key].scale.x = 0;
+      }
+      else {
+        this.chainBar[key].scale.x += 2;
+      }
+      this.chainLabel[key].text = "x" + this.chain[key];
+    }
   },
 
-  resetChain: function(playerPart){
-    this.chain[playerPart] = 1;
-    this.chainCount[playerPart] = 0;
-    this[playerPart+"ChainLabel"].text = "x" + this.chain[playerPart];
+  resetChain: function(key){
+    this.chain[key] = 1;
+    this.chainCount[key] = 1;
+    this.chainBar[key].scale.x = 0;
+    this.chainLabel[key].text = "x1";
   },
-
-  // TODO: continue here
-  initChainCounters: function (key) {
-    var counter = this.add.image(0, 0, key);
-    // counter.kill();
-    counter.width = 25;
-    counter.height = 25;
-    var counterGroup = this.add.group();
-    for(var i = 0; i < 5; i++) {
-      counterGroup.add(counter);
-    }
-  }
 };
