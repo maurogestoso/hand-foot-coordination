@@ -63,6 +63,7 @@ HandFoot.Game.prototype = {
 
     // score / chain
     this.score = 0;
+    this.scoreGoal = 50;
     this.chain = {
       hand: 1,
       foot: 1
@@ -99,8 +100,9 @@ HandFoot.Game.prototype = {
     // time / difficulty
     this.offset = 800;
     this.delay = 2200;
-    this.nextHandItem = 0;
-    this.nextFootItem = this.offset;
+    this.nextItem = {};
+    this.nextItem.hand = 0;
+    this.nextItem.foot = this.offset;
 
   },
 
@@ -169,13 +171,13 @@ HandFoot.Game.prototype = {
   },
 
   dropItemsTimer: function () {
-    if(this.nextHandItem < this.time.now){
+    if(this.nextItem.hand < this.time.now){
       this.dropItemOnSide("hand");
-      this.nextHandItem = this.time.now + this.delay;
+      this.nextItem.hand = this.time.now + this.delay;
     }
-    if(this.nextFootItem < this.time.now){
+    if(this.nextItem.foot < this.time.now){
       this.dropItemOnSide("foot");
-      this.nextFootItem = this.time.now + this.delay;
+      this.nextItem.foot = this.time.now + this.delay;
     }
   },
 
@@ -184,6 +186,10 @@ HandFoot.Game.prototype = {
     var itemGroup = this.rnd.pick(["basketballs", "footballs"]);
     var item = this[itemGroup].getFirstExists(false, true, xPos, 16);
     item.body.velocity.y = 100;
+  },
+
+  decreaseDelay: function () {
+    this.delay -= 50;
   },
 
   // physics
@@ -211,6 +217,11 @@ HandFoot.Game.prototype = {
     this.score += this.chain[playerPart.key] * 10;
     this.scoreLabel.text = "score: " + this.score;
     this.increaseChain(playerPart.key);
+
+    if(this.score >= this.scoreGoal && this.score <= 1100) {
+      this.decreaseDelay();
+      this.scoreGoal += 50;
+    }
   },
 
   damagePlayer: function (playerPart) {
