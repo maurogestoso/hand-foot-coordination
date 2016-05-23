@@ -3,24 +3,17 @@
 <head>
 	<meta charset="UTF-8" />
 	<title>Hand-Foot-Eye Coordination</title>
-	<script src="js/phaser.min.js"></script>
-	<script src="js/Game.js"></script>
 </head>
 <body>
 
 <div id="gameContainer"></div>
-
-<script>
-	window.onload = function() {
-
-		var game = new Phaser.Game(300, 600, Phaser.AUTO, 'gameContainer');
-
-		game.state.add('Game', HandFoot.Game);
-
-		game.state.start('Game');
-
-	};
-</script>
+<script src="js/phaser.min.js"></script>
+<script src="js/Boot.js"></script>
+<script src="js/Load.js"></script>
+<script src="js/Menu.js"></script>
+<script src="js/Play.js"></script>
+<script src="js/GameOver.js"></script>
+<script src="js/game.js"></script>
 
 </body>
 </html>

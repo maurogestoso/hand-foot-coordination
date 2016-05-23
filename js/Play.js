@@ -1,6 +1,6 @@
-var HandFoot = {};
+var HandFoot = HandFoot || {};
 
-HandFoot.Game = function (game) {
+HandFoot.Play = function (game) {
 
     //  When a State is added to Phaser it automatically has the following properties set on it, even if they already exist:
 
@@ -30,29 +30,11 @@ HandFoot.Game = function (game) {
 
 };
 
-HandFoot.Game.prototype = {
+HandFoot.Play.prototype = {
 
-  init: function(){
-    this.scale.pageAlignHorizontally = true;
-    this.scale.pageAlignVertically = true;
-
-    this.physics.startSystem(Phaser.Physics.ARCADE);
-    this.physics.arcade.gravity.y = 0;
-  },
-
-  preload: function() {
-    // TODO hand and foot sprites are too big, maybe 48x48
-    this.load.spritesheet("hand", "assets/img/hand-sheet.png", 64, 64, 3, 2, 2);
-    this.load.spritesheet("foot", "assets/img/foot-sheet.png", 64, 64, 3, 2, 2);
-    this.load.image("football", "assets/img/football.png");
-    this.load.image("basketball", "assets/img/basketball.png");
-    this.load.image("top-panel", "assets/img/top-panel.png");
-    this.load.image("orange-block", "assets/img/orange-block.png");
-  },
+  
 
   create: function () {
-
-    this.stage.backgroundColor = "79bd9a";
     
     // sprites
     this.hand = this.initPlayerPart("hand");
@@ -189,7 +171,10 @@ HandFoot.Game.prototype = {
   },
 
   decreaseDelay: function () {
-    this.delay -= 50;
+    if(this.score >= this.scoreGoal && this.score <= 1100) {
+      this.delay -= 50;
+      this.scoreGoal += 50;
+    }
   },
 
   // physics
@@ -217,11 +202,7 @@ HandFoot.Game.prototype = {
     this.score += this.chain[playerPart.key] * 10;
     this.scoreLabel.text = "score: " + this.score;
     this.increaseChain(playerPart.key);
-
-    if(this.score >= this.scoreGoal && this.score <= 1100) {
-      this.decreaseDelay();
-      this.scoreGoal += 50;
-    }
+    this.decreaseDelay();    
   },
 
   damagePlayer: function (playerPart) {
