@@ -32,8 +32,6 @@ HandFoot.Play = function (game) {
 
 HandFoot.Play.prototype = {
 
-  
-
   create: function () {
 
     this.add.tileSprite(0, 0, this.world.width, this.world.height, 'lined-paper');
@@ -79,10 +77,11 @@ HandFoot.Play.prototype = {
 
     // time / difficulty
     this.offset = 800;
-    this.delay = 2200;
-    this.nextItem = {};
-    this.nextItem.hand = 0;
-    this.nextItem.foot = this.offset;
+    this.delay = 1800;
+    this.nextItem = {
+      hand: 0,
+      foot: this.offset
+    };
 
   },
 
@@ -101,6 +100,10 @@ HandFoot.Play.prototype = {
   // player parts
 
   initPlayerPart: function (key) {
+    /*
+     * called @ create
+     * */
+
     var newPart = this.add.sprite(0, 0, key);
     this.physics.arcade.enableBody(newPart);
     newPart.body.allowGravity = false;
@@ -121,11 +124,17 @@ HandFoot.Play.prototype = {
   },
 
   moveHand: function () {
+    /*
+     * called by event setup @ create
+     */
     if(this.hand.x === this.hand.custom.leftPos) this.hand.x = this.hand.custom.rightPos;
     else this.hand.x = this.hand.custom.leftPos;
   },
 
   moveFoot: function () {
+    /*
+     * called by event setup @ create
+     */
     if(this.foot.x === this.foot.custom.leftPos) this.foot.x = this.foot.custom.rightPos;
     else this.foot.x = this.foot.custom.leftPos;
   },
@@ -133,6 +142,9 @@ HandFoot.Play.prototype = {
   // items
 
   initGroup: function (key) {
+    /*
+     * called @ create
+     * */
     var newGroup = this.add.group();
     newGroup.enableBody = true;
     newGroup.createMultiple(10, key);
@@ -151,6 +163,9 @@ HandFoot.Play.prototype = {
   },
 
   dropItemsTimer: function () {
+    /*
+     * called @ update
+     * */
     if(this.nextItem.hand < this.time.now){
       this.dropItemOnSide("hand");
       this.nextItem.hand = this.time.now + this.delay;
@@ -162,6 +177,9 @@ HandFoot.Play.prototype = {
   },
 
   dropItemOnSide: function (key) {
+    /*
+     * called by dropItemsTimer
+     * */
     var xPos = this.rnd.pick([this[key].custom.leftPos, this[key].custom.rightPos]);
     var itemGroup = this.rnd.pick(["basketballs", "footballs"]);
     var item = this[itemGroup].getFirstExists(false, true, xPos, 16);
@@ -169,6 +187,10 @@ HandFoot.Play.prototype = {
   },
 
   decreaseDelay: function () {
+    /*
+     * called by scorePoints
+     * */
+
     if(this.score >= this.scoreGoal && this.score <= 1100) {
       this.delay -= 50;
       this.scoreGoal += 50;
@@ -178,6 +200,10 @@ HandFoot.Play.prototype = {
   // physics
 
   handleOverlap: function (playerPart, item) {
+    /*
+    * called by this.physics.arcade.overlap @ update
+    * */
+
     item.kill();
     if(playerPart.custom.killedBy === item.key){
       this.damagePlayer(playerPart);
@@ -188,6 +214,9 @@ HandFoot.Play.prototype = {
   },
 
   handleItemOutOfBounds: function(item) {
+    /*
+     * called by event setup @ initGroup
+     * */
     if((item.key === "basketball" &&  item.x < this.world.centerX) ||
       (item.key === "football"   &&  item.x > this.world.centerX)) {
       this.resetChain(item.key === "basketball" ? "hand" : "foot");
@@ -197,6 +226,10 @@ HandFoot.Play.prototype = {
   // scoring
 
   scorePoints: function (playerPart) {
+    /*
+     * called by handleOverlap
+     * */
+
     this.score += this.chain[playerPart.key] * 10;
     this.scoreLabel.text = "score: " + this.score;
     this.increaseChain(playerPart.key);
@@ -204,10 +237,18 @@ HandFoot.Play.prototype = {
   },
 
   damagePlayer: function (playerPart) {
+    /*
+     * called by handleOverlap
+     * */
+
     this.resetChain(playerPart.key)
   },
 
   increaseChain: function(key){
+    /*
+     * called by scorePoints
+     * */
+
     if(this.chain[key] === 4) return;
 
     if (this.chainCount[key] < 5) {
@@ -228,6 +269,9 @@ HandFoot.Play.prototype = {
   },
 
   resetChain: function(key){
+    /*
+     * called by handleOutOfBounds
+     * */
     this.chain[key] = 1;
     this.chainCount[key] = 1;
     this.resetChainBarLength(key);
@@ -237,6 +281,9 @@ HandFoot.Play.prototype = {
   // UI
 
   initChainBars: function () {
+    /*
+     * called @ create
+     * */
     var hand = {}, foot = {}, dimensions = {};
     hand.left = this.add.image(this.world.width/12, this.world.height/8, 'blueBarLeft');
     hand.left.scale.setTo(1, 0.6);
@@ -261,10 +308,16 @@ HandFoot.Play.prototype = {
 
   },
   increaseChainBarLength: function (key) {
+    /*
+     * called by increaseChain
+     * */
      this.chainBars[key].mid.scale.x += this.chainBars.dimensions.scaleDelta;
      this.chainBars[key].right.position.x = this.chainBars[key].mid.right;
   },
   resetChainBarLength: function (key) {
+    /*
+     * called by increaseChain and resetChain
+     * */
      this.chainBars[key].mid.scale.x = 0;
      this.chainBars[key].right.position.x = this.chainBars[key].mid.right;
   }
