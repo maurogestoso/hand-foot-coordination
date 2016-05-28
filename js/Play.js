@@ -118,7 +118,7 @@ HandFoot.Play.prototype = {
       newPart.custom.rightPos = this.world.width*7/8;
       newPart.custom.killedBy = "basketball";
     }
-    newPart.reset(newPart.custom.leftPos, this.world.height-32);
+    newPart.reset(newPart.custom.leftPos, this.world.height-48);
     return newPart;
   },
 

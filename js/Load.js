@@ -14,10 +14,9 @@ HandFoot.Load.prototype = {
 		progressBar.anchor.setTo(0.5, 0.5);
 		progressBar.scale.setTo(1, 2);
 		this.load.setPreloadSprite(progressBar);
-
-		// TODO hand and foot sprites are too big, maybe 48x48
-		this.load.spritesheet("hand", "assets/img/hand-sheet.png", 64, 64, 3, 2, 2);
-		this.load.spritesheet("foot", "assets/img/foot-sheet.png", 64, 64, 3, 2, 2);
+		
+		this.load.image("hand", "assets/img/hand-64.png");
+		this.load.image("foot", "assets/img/foot-64.png");
 		this.load.image("football", "assets/img/football.png");
 		this.load.image("basketball", "assets/img/basketball.png");
 		this.load.image("top-panel", "assets/img/top-panel.png");
