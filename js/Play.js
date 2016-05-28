@@ -35,6 +35,8 @@ HandFoot.Play.prototype = {
   
 
   create: function () {
+
+    this.add.tileSprite(0, 0, this.world.width, this.world.height, 'lined-paper');
     
     // sprites
     this.hand = this.initPlayerPart("hand");
@@ -56,7 +58,7 @@ HandFoot.Play.prototype = {
     };
 
     // UI
-    this.add.image(0, 0, "top-panel");
+    this.add.image(0, 0, "metal-panel");
     var textStyle = { font: '18px Arial', fill: '#ffffff' };
     this.scoreLabel = this.add.text(this.world.centerX, 30, 'score: 0', textStyle);
     this.scoreLabel.anchor.setTo(0.5);
@@ -68,11 +70,7 @@ HandFoot.Play.prototype = {
     this.chainLabel.foot.anchor.setTo(0.5);
 
     // Chain bars
-    this.chainBar = {};
-    this.chainBar.hand = this.add.image(25, 75, 'orange-block');
-    this.chainBar.hand.scale.setTo(0, 1);
-    this.chainBar.foot = this.add.image(this.world.centerX + 25, 75, 'orange-block');
-    this.chainBar.foot.scale.setTo(0, 1);
+    this.chainBars = this.initChainBars();
 
     // cursor, #control
     this.cursor = this.input.keyboard.createCursorKeys();
@@ -214,16 +212,16 @@ HandFoot.Play.prototype = {
 
     if (this.chainCount[key] < 5) {
       this.chainCount[key]++;
-      this.chainBar[key].scale.x += 2;
+      this.increaseChainBarLength(key);
     }
     else if(this.chainCount[key] === 5){
       this.chain[key]++;
       this.chainCount[key] = 1;
       if (this.chain[key] < 4) {
-        this.chainBar[key].scale.x = 0;
+        this.resetChainBarLength(key);
       }
       else {
-        this.chainBar[key].scale.x += 2;
+        this.increaseChainBarLength(key);
       }
       this.chainLabel[key].text = "x" + this.chain[key];
     }
@@ -232,7 +230,42 @@ HandFoot.Play.prototype = {
   resetChain: function(key){
     this.chain[key] = 1;
     this.chainCount[key] = 1;
-    this.chainBar[key].scale.x = 0;
+    this.resetChainBarLength(key);
     this.chainLabel[key].text = "x1";
   },
+
+  // UI
+
+  initChainBars: function () {
+    var hand = {}, foot = {}, dimensions = {};
+    hand.left = this.add.image(this.world.width/12, this.world.height/8, 'blueBarLeft');
+    hand.left.scale.setTo(1, 0.6);
+    hand.mid = this.add.image(hand.left.right, hand.left.top, 'blueBarMid');
+    hand.mid.scale.setTo(0, 0.6);
+    hand.right = this.add.image(hand.mid.right, hand.left.top, 'blueBarRight');
+    hand.right.scale.setTo(1, 0.6);
+
+    foot.left = this.add.image(this.world.centerX + this.world.width/12, this.world.height/8, 'blueBarLeft');
+    foot.left.scale.setTo(1, 0.6);
+    foot.mid = this.add.image(foot.left.right, foot.left.top, 'blueBarMid');
+    foot.mid.scale.setTo(0, 0.6);
+    foot.right = this.add.image(foot.mid.right, foot.left.top, 'blueBarRight');
+    foot.right.scale.setTo(1, 0.6);
+
+    dimensions.maxScale = (this.world.width/2 - this.world.width/6 - 12) / 16;
+    dimensions.scaleDelta = dimensions.maxScale / 5;
+
+    return {
+      hand: hand, foot: foot, dimensions: dimensions
+    }
+
+  },
+  increaseChainBarLength: function (key) {
+     this.chainBars[key].mid.scale.x += this.chainBars.dimensions.scaleDelta;
+     this.chainBars[key].right.position.x = this.chainBars[key].mid.right;
+  },
+  resetChainBarLength: function (key) {
+     this.chainBars[key].mid.scale.x = 0;
+     this.chainBars[key].right.position.x = this.chainBars[key].mid.right;
+  }
 };

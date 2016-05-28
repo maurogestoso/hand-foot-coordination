@@ -7,9 +7,10 @@ HandFoot.Boot = function (game) {
 HandFoot.Boot.prototype = {
 	preload: function () {
 		this.load.image("orange-block", "assets/img/orange-block.png");
+		this.load.image("lined-paper", "assets/img/lined-paper.png");
 	},
 	create: function () {
-		this.stage.backgroundColor = "79bd9a";
+		this.add.tileSprite(0, 0, this.world.width, this.world.height, 'lined-paper');
 		this.scale.pageAlignHorizontally = true;
 		this.scale.pageAlignVertically = true;
 
