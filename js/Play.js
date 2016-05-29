@@ -202,7 +202,7 @@ HandFoot.Play.prototype = {
   },
 
   ////////////////////////////////////////////////////
-  /////////////// controls
+  /////////////// CONTROLS
   ////////////////////////////////////////////////////
 
   initControls: function () {
@@ -227,7 +227,7 @@ HandFoot.Play.prototype = {
   },
 
   ////////////////////////////////////////////////////
-  ///////////// physics
+  ///////////// PHYSICS
   ////////////////////////////////////////////////////
 
   handleOverlap: function (playerPart, item) {
@@ -254,7 +254,49 @@ HandFoot.Play.prototype = {
   },
 
   ////////////////////////////////////////////////////
-  ///////////////// scoring
+  ///////////////// HEALTH
+  ////////////////////////////////////////////////////
+
+  initHealthBar: function () {
+    var healthBar = {};
+    healthBar.maxScale = (this.world.width - this.world.width / 6 - 12) / 16;
+    healthBar.step = healthBar.maxScale / 9;
+
+    healthBar.left = this.add.image(this.world.width / 12, this.world.height / 30, 'greenBarLeft');
+    healthBar.left.scale.setTo(1, 0.7);
+    healthBar.mid = this.add.image(healthBar.left.right, healthBar.left.top, 'greenBarMid');
+    healthBar.mid.scale.setTo(healthBar.maxScale, 0.7);
+    healthBar.right = this.add.image(healthBar.mid.right, healthBar.left.top, 'greenBarRight');
+    healthBar.right.scale.setTo(1, 0.7);
+    return healthBar;
+  },
+  decreaseHealth: function () {
+    this.health -= 10;
+
+    if(this.health === 0) this.gameOver();
+
+    this.healthBar.mid.scale.x -= this.healthBar.step;
+    this.healthBar.right.position.x = this.healthBar.mid.right;
+
+  },
+  increaseHealth: function (key) {
+    if(this.health === 100) return;
+
+    var newHealth = this.health + 10 * (this.chain[key] - 1);
+    if(newHealth >= 100) {
+      this.health = 100;
+      this.healthBar.mid.scale.x = this.healthBar.maxScale;
+      this.healthBar.right.position.x = this.healthBar.mid.right;
+    }
+    else {
+      this.health = newHealth;
+      this.healthBar.mid.scale.x += this.healthBar.step * (this.chain[key] - 1);
+      this.healthBar.right.position.x = this.healthBar.mid.right;
+    }
+  },
+
+  ////////////////////////////////////////////////////
+  ///////////////// SCORE / CHAIN
   ////////////////////////////////////////////////////
 
   scorePoints: function (playerPart) {
@@ -292,6 +334,7 @@ HandFoot.Play.prototype = {
       this.chainCount[key] = 1;
       if (this.chain[key] < 4) {
         this.resetChainBarLength(key);
+        this.increaseHealth(key);
       }
       else {
         this.increaseChainBarLength(key);
@@ -308,38 +351,6 @@ HandFoot.Play.prototype = {
     this.resetChainBarLength(key);
     this.chainLabel[key].text = "x1";
   },
-
-  ////////////////////////////////////////////////////
-  ///////////////// HEALTH
-  ////////////////////////////////////////////////////
-
-  initHealthBar: function () {
-    var healthBar = {};
-    healthBar.maxScale = (this.world.width - this.world.width / 6 - 12) / 16;
-    healthBar.step = healthBar.maxScale / 9;
-
-    healthBar.left = this.add.image(this.world.width / 12, this.world.height / 30, 'greenBarLeft');
-    healthBar.left.scale.setTo(1, 0.7);
-    healthBar.mid = this.add.image(healthBar.left.right, healthBar.left.top, 'greenBarMid');
-    healthBar.mid.scale.setTo(healthBar.maxScale, 0.7);
-    healthBar.right = this.add.image(healthBar.mid.right, healthBar.left.top, 'greenBarRight');
-    healthBar.right.scale.setTo(1, 0.7);
-    return healthBar;
-  },
-  decreaseHealth: function () {
-    this.health -= 10;
-
-    if(this.health === 0) this.gameOver();
-
-    this.healthBar.mid.scale.x -= this.healthBar.step;
-    this.healthBar.right.position.x = this.healthBar.mid.right;
-
-  },
-
-  ////////////////////////////////////////////////////
-  ///////////////// CHAIN
-  ////////////////////////////////////////////////////
-
   initChainBars: function () {
     /*
      * called @ create
