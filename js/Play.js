@@ -285,18 +285,18 @@ HandFoot.Play.prototype = {
      * called @ create
      * */
     var hand = {}, foot = {}, dimensions = {};
-    hand.left = this.add.image(this.world.width/12, this.world.height/8, 'blueBarLeft');
+    hand.left = this.add.image(this.world.width/12, this.world.height/8, 'redBarLeft');
     hand.left.scale.setTo(1, 0.6);
-    hand.mid = this.add.image(hand.left.right, hand.left.top, 'blueBarMid');
+    hand.mid = this.add.image(hand.left.right, hand.left.top, 'redBarMid');
     hand.mid.scale.setTo(0, 0.6);
-    hand.right = this.add.image(hand.mid.right, hand.left.top, 'blueBarRight');
+    hand.right = this.add.image(hand.mid.right, hand.left.top, 'redBarRight');
     hand.right.scale.setTo(1, 0.6);
 
-    foot.left = this.add.image(this.world.centerX + this.world.width/12, this.world.height/8, 'blueBarLeft');
+    foot.left = this.add.image(this.world.centerX + this.world.width/12, this.world.height/8, 'redBarLeft');
     foot.left.scale.setTo(1, 0.6);
-    foot.mid = this.add.image(foot.left.right, foot.left.top, 'blueBarMid');
+    foot.mid = this.add.image(foot.left.right, foot.left.top, 'redBarMid');
     foot.mid.scale.setTo(0, 0.6);
-    foot.right = this.add.image(foot.mid.right, foot.left.top, 'blueBarRight');
+    foot.right = this.add.image(foot.mid.right, foot.left.top, 'redBarRight');
     foot.right.scale.setTo(1, 0.6);
 
     dimensions.maxScale = (this.world.width/2 - this.world.width/6 - 12) / 16;

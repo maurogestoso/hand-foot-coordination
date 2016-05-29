@@ -17,21 +17,17 @@ HandFoot.Load.prototype = {
 
 		this.load.image("hand", "assets/img/hand-64.png");
 		this.load.image("foot", "assets/img/foot-64.png");
-		this.load.image("football", "assets/img/football-32.png");
-		this.load.image("basketball", "assets/img/basketball-32.png");
-		this.load.image("top-panel", "assets/img/top-panel.png");
-
+		this.load.image("football", "assets/img/amanda-football-border-48.png");
+		this.load.image("basketball", "assets/img/amanda-basketball-border-48.png");
+		
 		// UI
 		this.load.image('metal-panel', 'assets/img/metalPanel.png');
-		this.load.image('greenBarLeft', 'assets/img/barHorizontal_green_left.png')
-		this.load.image('greenBarMid', 'assets/img/barHorizontal_green_mid.png')
-		this.load.image('greenBarRight', 'assets/img/barHorizontal_green_right.png')
-		this.load.image('redBarLeft', 'assets/img/barHorizontal_red_left.png')
-		this.load.image('redBarMid', 'assets/img/barHorizontal_red_mid.png')
-		this.load.image('redBarRight', 'assets/img/barHorizontal_red_right.png')
-		this.load.image('blueBarLeft', 'assets/img/barHorizontal_blue_left.png')
-		this.load.image('blueBarMid', 'assets/img/barHorizontal_blue_mid.png')
-		this.load.image('blueBarRight', 'assets/img/barHorizontal_blue_right.png')
+		this.load.image('greenBarLeft', 'assets/img/barHorizontal_green_left.png');
+		this.load.image('greenBarMid', 'assets/img/barHorizontal_green_mid.png');
+		this.load.image('greenBarRight', 'assets/img/barHorizontal_green_right.png');
+		this.load.image('redBarLeft', 'assets/img/barHorizontal_red_left.png');
+		this.load.image('redBarMid', 'assets/img/barHorizontal_red_mid.png');
+		this.load.image('redBarRight', 'assets/img/barHorizontal_red_right.png');
 
 	},
 
