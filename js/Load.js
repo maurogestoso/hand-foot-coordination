@@ -15,10 +15,14 @@ HandFoot.Load.prototype = {
 		progressBar.scale.setTo(1, 2);
 		this.load.setPreloadSprite(progressBar);
 
-		this.load.image("hand", "assets/img/hand-64.png");
-		this.load.image("foot", "assets/img/foot-64.png");
-		this.load.image("football", "assets/img/amanda-football-border-48.png");
-		this.load.image("basketball", "assets/img/amanda-basketball-border-48.png");
+		// MAIN MENU
+		this.load.image('title', 'assets/img/amanda-title-border-250.png')
+
+		// SPRITES
+		this.load.image('hand', 'assets/img/hand-64.png');
+		this.load.image('foot', 'assets/img/foot-64.png');
+		this.load.image('football', 'assets/img/amanda-football-border-48.png');
+		this.load.image('basketball', 'assets/img/amanda-basketball-border-48.png');
 		
 		// UI
 		this.load.image('metal-panel', 'assets/img/metalPanel.png');
@@ -33,6 +37,6 @@ HandFoot.Load.prototype = {
 
 	create: function () {
 
-		this.state.start('Play');
+		this.state.start('Menu');
 	}
 };

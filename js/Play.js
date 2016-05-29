@@ -33,7 +33,8 @@ HandFoot.Play.prototype = {
   },
 
   create: function () {
-
+    
+    // background
     this.add.tileSprite(0, 0, this.world.width, this.world.height, 'lined-paper');
     
     // sprites
@@ -398,7 +399,7 @@ HandFoot.Play.prototype = {
   ////////////////////////////////////////////////////
 
   gameOver: function () {
-    this.state.start('Play');
+    this.state.start('Menu');
   }
 
 };
