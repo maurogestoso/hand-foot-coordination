@@ -56,12 +56,14 @@ HandFoot.Play.prototype = {
     };
 
     // UI
+    var textStyle;
     this.add.image(0, 0, "metal-panel");
-    var textStyle = { font: '18px Arial', fill: '#ffffff' };
+    textStyle = { 'font': '24px Pixel', fill: 'black' };
     this.scoreLabel = this.add.text(this.world.centerX, 30, 'score: 0', textStyle);
     this.scoreLabel.anchor.setTo(0.5);
 
     this.chainLabel = {};
+    textStyle = { 'font': '36px Pixel', fill: 'black' };
     this.chainLabel.hand = this.add.text(this.world.width/4, 60, "x1", textStyle);
     this.chainLabel.hand.anchor.setTo(0.5);
     this.chainLabel.foot = this.add.text(this.world.width*3/4, 60, "x1", textStyle);
