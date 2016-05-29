@@ -239,9 +239,11 @@ HandFoot.Play.prototype = {
     item.kill();
     if(playerPart.custom.killedBy === item.key){
       this.damagePlayer(playerPart);
+      this.grabBadItemTween(playerPart);
     }
     else {
       this.scorePoints(playerPart);
+      this.grabGoodItemTween(playerPart);
     }
   },
   handleItemOutOfBounds: function(item) {
@@ -252,6 +254,19 @@ HandFoot.Play.prototype = {
       (item.key === "football"   &&  item.x > this.world.centerX)) {
       this.resetChain(item.key === "basketball" ? "hand" : "foot");
     }
+  },
+
+  grabGoodItemTween: function (playerPart) {
+    this.add.tween(playerPart.scale)
+      .to({x: 1.15, y: 1.15}, 200)
+      .to({x: 1, y: 1}, 200)
+      .start();
+  },
+  grabBadItemTween: function (playerPart) {
+    this.add.tween(playerPart.scale)
+      .to({x: 0.95, y: 0.95}, 200)
+      .to({x: 1, y: 1}, 200)
+      .start();
   },
 
   ////////////////////////////////////////////////////
