@@ -33,6 +33,14 @@ HandFoot.Load.prototype = {
 		this.load.image('redBarMid', 'assets/img/barHorizontal_red_mid.png');
 		this.load.image('redBarRight', 'assets/img/barHorizontal_red_right.png');
 
+		// AUDIO
+		this.load.audio('good', 'assets/audio/pepSound3.ogg');
+		this.load.audio('bad', 'assets/audio/error3.ogg');
+		this.load.audio('gameOver', 'assets/audio/gameover2.ogg');
+		this.load.audio('heal', 'assets/audio/upgrade5.ogg');
+		this.load.audio('woosh', 'assets/audio/woosh6.ogg');
+		this.load.audio('music', 'assets/audio/swinging_pants.ogg');
+
 	},
 
 	create: function () {
