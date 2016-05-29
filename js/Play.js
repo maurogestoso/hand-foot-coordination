@@ -2,35 +2,35 @@ var HandFoot = HandFoot || {};
 
 HandFoot.Play = function (game) {
 
-    //  When a State is added to Phaser it automatically has the following properties set on it, even if they already exist:
+  //  When a State is added to Phaser it automatically has the following properties set on it, even if they already exist:
 
-    this.game;      //  a reference to the currently running game (Phaser.Game)
-    this.add;       //  used to add sprites, text, groups, etc (Phaser.GameObjectFactory)
-    this.camera;    //  a reference to the game camera (Phaser.Camera)
-    this.cache;     //  the game cache (Phaser.Cache)
-    this.input;     //  the global input manager. You can access this.input.keyboard, this.input.mouse, as well from it. (Phaser.Input)
-    this.load;      //  for preloading assets (Phaser.Loader)
-    this.math;      //  lots of useful common math operations (Phaser.Math)
-    this.sound;     //  the sound manager - add a sound, play one, set-up markers, etc (Phaser.SoundManager)
-    this.stage;     //  the game stage (Phaser.Stage)
-    this.time;      //  the clock (Phaser.Time)
-    this.tweens;    //  the tween manager (Phaser.TweenManager)
-    this.state;     //  the state manager (Phaser.StateManager)
-    this.world;     //  the game world (Phaser.World)
-    this.particles; //  the particle manager (Phaser.Particles)
-    this.physics;   //  the physics manager (Phaser.Physics)
-    this.rnd;       //  the repeatable random number generator (Phaser.RandomDataGenerator)
+  this.game;      //  a reference to the currently running game (Phaser.Game)
+  this.add;       //  used to add sprites, text, groups, etc (Phaser.GameObjectFactory)
+  this.camera;    //  a reference to the game camera (Phaser.Camera)
+  this.cache;     //  the game cache (Phaser.Cache)
+  this.input;     //  the global input manager. You can access this.input.keyboard, this.input.mouse, as well from it. (Phaser.Input)
+  this.load;      //  for preloading assets (Phaser.Loader)
+  this.math;      //  lots of useful common math operations (Phaser.Math)
+  this.sound;     //  the sound manager - add a sound, play one, set-up markers, etc (Phaser.SoundManager)
+  this.stage;     //  the game stage (Phaser.Stage)
+  this.time;      //  the clock (Phaser.Time)
+  this.tweens;    //  the tween manager (Phaser.TweenManager)
+  this.state;     //  the state manager (Phaser.StateManager)
+  this.world;     //  the game world (Phaser.World)
+  this.particles; //  the particle manager (Phaser.Particles)
+  this.physics;   //  the physics manager (Phaser.Physics)
+  this.rnd;       //  the repeatable random number generator (Phaser.RandomDataGenerator)
 
-    //  You can use any of these from any function within this State.
-    //  But do consider them as being 'reserved words', i.e. don't create a property for your own game called "world" or you'll over-write the world reference.
-
-    this.hand;
-    this.foot;
-    this.cursors;
+  //  You can use any of these from any function within this State.
+  //  But do consider them as being 'reserved words', i.e. don't create a property for your own game called "world" or you'll over-write the world reference.
 
 };
 
 HandFoot.Play.prototype = {
+
+  init: function () {
+
+  },
 
   create: function () {
 
@@ -39,7 +39,6 @@ HandFoot.Play.prototype = {
     // sprites
     this.hand = this.initPlayerPart("hand");
     this.foot = this.initPlayerPart("foot");
-
     this.basketballs = this.initGroup("basketball");
     this.footballs = this.initGroup("football");
 
@@ -73,16 +72,14 @@ HandFoot.Play.prototype = {
     this.chainBars = this.initChainBars();
 
     // cursor, #control
-    this.cursor = this.input.keyboard.createCursorKeys();
-    this.cursor.left.onDown.add(this.moveHand, this);
-    this.cursor.right.onDown.add(this.moveFoot, this);
+    this.cursor = this.initControls();
 
     // time / difficulty
-    this.offset = 800;
-    this.delay = 1800;
+    this.difficulty = this.setupDifficulty();
+    this.time.events.loop(this.difficulty.increaseTick * 1000, this.increaseDifficulty, this);
     this.nextItem = {
       hand: 0,
-      foot: this.offset
+      foot: this.difficulty.itemOffset
     };
 
   },
@@ -99,7 +96,9 @@ HandFoot.Play.prototype = {
 
   },
 
-  // player parts
+  ////////////////////////////////////////////////////
+  /////////////// SPRITES
+  ////////////////////////////////////////////////////
 
   initPlayerPart: function (key) {
     /*
@@ -124,25 +123,6 @@ HandFoot.Play.prototype = {
     newPart.reset(newPart.custom.leftPos, this.world.height-48);
     return newPart;
   },
-
-  moveHand: function () {
-    /*
-     * called by event setup @ create
-     */
-    if(this.hand.x === this.hand.custom.leftPos) this.hand.x = this.hand.custom.rightPos;
-    else this.hand.x = this.hand.custom.leftPos;
-  },
-
-  moveFoot: function () {
-    /*
-     * called by event setup @ create
-     */
-    if(this.foot.x === this.foot.custom.leftPos) this.foot.x = this.foot.custom.rightPos;
-    else this.foot.x = this.foot.custom.leftPos;
-  },
-
-  // items
-
   initGroup: function (key) {
     /*
      * called @ create
@@ -164,42 +144,85 @@ HandFoot.Play.prototype = {
     return newGroup;
   },
 
+  ////////////////////////////////////////////////////
+  //////////// DIFFICULTY
+  ////////////////////////////////////////////////////
+
   dropItemsTimer: function () {
     /*
      * called @ update
-     * */
+     */
     if(this.nextItem.hand < this.time.now){
       this.dropItemOnSide("hand");
-      this.nextItem.hand = this.time.now + this.delay;
+      this.nextItem.hand = this.time.now + this.difficulty.itemDelay;
     }
     if(this.nextItem.foot < this.time.now){
       this.dropItemOnSide("foot");
-      this.nextItem.foot = this.time.now + this.delay;
+      this.nextItem.foot = this.time.now + this.difficulty.itemDelay;
     }
   },
-
   dropItemOnSide: function (key) {
     /*
      * called by dropItemsTimer
-     * */
+     */
     var xPos = this.rnd.pick([this[key].custom.leftPos, this[key].custom.rightPos]);
     var itemGroup = this.rnd.pick(["basketballs", "footballs"]);
-    var item = this[itemGroup].getFirstExists(false, true, xPos, 16);
-    item.body.velocity.y = 100;
+    var item = this[itemGroup].getFirstDead(true, xPos, 16);
+    item.body.velocity.y = this.difficulty.itemSpeed;
+  },
+  setupDifficulty: function() {
+    var difficulty = {};
+    difficulty.gameDuration = 120;
+    difficulty.increaseTick = 2;
+
+    difficulty.minItemSpeed = 100;
+    difficulty.maxItemSpeed = 400;
+    difficulty.itemSpeed = difficulty.minItemSpeed;
+    difficulty.speedDelta = (difficulty.maxItemSpeed - difficulty.minItemSpeed) / (difficulty.gameDuration / difficulty.increaseTick);
+
+    difficulty.maxItemDelay = 1600;
+    difficulty.minItemDelay = 600;
+    difficulty.itemDelay = difficulty.maxItemDelay;
+    difficulty.delayDelta = (difficulty.maxItemDelay - difficulty.minItemDelay) / (difficulty.gameDuration / difficulty.increaseTick);
+
+    difficulty.itemOffset = 800;
+
+    return difficulty;
+  },
+  increaseDifficulty: function () {
+    console.log('*** Increase difficulty!');
+    this.difficulty.itemSpeed += this.difficulty.speedDelta;
+    this.difficulty.itemDelay -= this.difficulty.delayDelta;
   },
 
-  decreaseDelay: function () {
+  ////////////////////////////////////////////////////
+  /////////////// controls
+  ////////////////////////////////////////////////////
+
+  initControls: function () {
+    var cursor = this.input.keyboard.createCursorKeys();
+    cursor.left.onDown.add(this.moveHand, this);
+    cursor.right.onDown.add(this.moveFoot, this);
+    return cursor;
+  },
+  moveHand: function () {
     /*
-     * called by scorePoints
-     * */
-
-    if(this.score >= this.scoreGoal && this.score <= 1100) {
-      this.delay -= 50;
-      this.scoreGoal += 50;
-    }
+     * called by event setup @ create
+     */
+    if(this.hand.x === this.hand.custom.leftPos) this.hand.x = this.hand.custom.rightPos;
+    else this.hand.x = this.hand.custom.leftPos;
+  },
+  moveFoot: function () {
+    /*
+     * called by event setup @ create
+     */
+    if(this.foot.x === this.foot.custom.leftPos) this.foot.x = this.foot.custom.rightPos;
+    else this.foot.x = this.foot.custom.leftPos;
   },
 
-  // physics
+  ////////////////////////////////////////////////////
+  ///////////// physics
+  ////////////////////////////////////////////////////
 
   handleOverlap: function (playerPart, item) {
     /*
@@ -214,7 +237,6 @@ HandFoot.Play.prototype = {
       this.scorePoints(playerPart);
     }
   },
-
   handleItemOutOfBounds: function(item) {
     /*
      * called by event setup @ initGroup
@@ -225,7 +247,9 @@ HandFoot.Play.prototype = {
     }
   },
 
-  // scoring
+  ////////////////////////////////////////////////////
+  ///////////////// scoring
+  ////////////////////////////////////////////////////
 
   scorePoints: function (playerPart) {
     /*
@@ -235,9 +259,9 @@ HandFoot.Play.prototype = {
     this.score += this.chain[playerPart.key] * 10;
     this.scoreLabel.text = "score: " + this.score;
     this.increaseChain(playerPart.key);
-    this.decreaseDelay();    
-  },
+    // this.decreaseDelay();
 
+  },
   damagePlayer: function (playerPart) {
     /*
      * called by handleOverlap
@@ -245,7 +269,6 @@ HandFoot.Play.prototype = {
 
     this.resetChain(playerPart.key)
   },
-
   increaseChain: function(key){
     /*
      * called by scorePoints
@@ -269,7 +292,6 @@ HandFoot.Play.prototype = {
       this.chainLabel[key].text = "x" + this.chain[key];
     }
   },
-
   resetChain: function(key){
     /*
      * called by handleOutOfBounds
@@ -280,7 +302,9 @@ HandFoot.Play.prototype = {
     this.chainLabel[key].text = "x1";
   },
 
-  // UI
+  ////////////////////////////////////////////////////
+  ///////////////// UI
+  ////////////////////////////////////////////////////
 
   initChainBars: function () {
     /*
