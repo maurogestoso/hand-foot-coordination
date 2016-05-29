@@ -59,6 +59,11 @@ HandFoot.Play.prototype = {
       foot: this.difficulty.itemOffset
     };
 
+    // sound
+    this.sound = this.initSounds();
+    this.sound.music.loop = true;
+    this.sound.music.play();
+
   },
 
   update: function () {
@@ -169,7 +174,6 @@ HandFoot.Play.prototype = {
     return difficulty;
   },
   increaseDifficulty: function () {
-    console.log('*** Increase difficulty!');
     this.difficulty.itemSpeed += this.difficulty.speedDelta;
     this.difficulty.itemDelay -= this.difficulty.delayDelta;
   },
@@ -211,10 +215,12 @@ HandFoot.Play.prototype = {
     item.kill();
     if(playerPart.custom.killedBy === item.key){
       this.damagePlayer(playerPart);
+      this.sound.bad.play();
       this.grabBadItemTween(playerPart);
     }
     else {
       this.scorePoints(playerPart);
+      this.sound.good.play();
       this.grabGoodItemTween(playerPart);
     }
   },
@@ -224,10 +230,10 @@ HandFoot.Play.prototype = {
      * */
     if((item.key === "basketball" &&  item.x < this.world.centerX) ||
       (item.key === "football"   &&  item.x > this.world.centerX)) {
+      this.sound.woosh.play();
       this.resetChain(item.key === "basketball" ? "hand" : "foot");
     }
   },
-
   grabGoodItemTween: function (playerPart) {
     this.add.tween(playerPart.scale)
       .to({x: 1.15, y: 1.15}, 200)
@@ -269,6 +275,8 @@ HandFoot.Play.prototype = {
   },
   increaseHealth: function (key) {
     if(this.health === 100) return;
+
+    this.sound.heal.play();
 
     var newHealth = this.health + 10 * (this.chain[key] - 1);
     if(newHealth >= 100) {
@@ -382,10 +390,27 @@ HandFoot.Play.prototype = {
   },
 
   ////////////////////////////////////////////////////
+  ///////////////// SOUND
+  ////////////////////////////////////////////////////
+
+  initSounds: function () {
+    var sound = {};
+    sound.good = this.add.audio('good');
+    sound.bad = this.add.audio('bad');
+    sound.gameOver = this.add.audio('gameOver');
+    sound.woosh = this.add.audio('woosh');
+    sound.heal = this.add.audio('heal');
+    sound.music = this.add.audio('music');
+    return sound;
+  },
+
+  ////////////////////////////////////////////////////
   ///////////////// GAME OVER
   ////////////////////////////////////////////////////
 
   gameOver: function () {
+    this.sound.gameOver.play();
+    this.sound.music.stop();
     this.state.start('Menu');
   }
 
