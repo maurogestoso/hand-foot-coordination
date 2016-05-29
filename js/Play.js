@@ -58,15 +58,19 @@ HandFoot.Play.prototype = {
     var textStyle;
     this.add.image(0, 0, "metal-panel");
     textStyle = { 'font': '24px Pixel', fill: 'black' };
-    this.scoreLabel = this.add.text(this.world.centerX, 30, 'score: 0', textStyle);
+    this.scoreLabel = this.add.text(this.world.centerX, this.world.height/10, 'score: 0', textStyle);
     this.scoreLabel.anchor.setTo(0.5);
 
     this.chainLabel = {};
     textStyle = { 'font': '36px Pixel', fill: 'black' };
-    this.chainLabel.hand = this.add.text(this.world.width/4, 60, "x1", textStyle);
-    this.chainLabel.hand.anchor.setTo(0.5);
-    this.chainLabel.foot = this.add.text(this.world.width*3/4, 60, "x1", textStyle);
-    this.chainLabel.foot.anchor.setTo(0.5);
+    this.chainLabel.hand = this.add.text(this.world.width/12, 60, "x1", textStyle);
+    this.chainLabel.hand.anchor.setTo(0, 0.5);
+    this.chainLabel.foot = this.add.text(this.world.width*11/12, 60, "x1", textStyle);
+    this.chainLabel.foot.anchor.setTo(1, 0.5);
+
+    // Health bar
+    this.health = 100;
+    this.healthBar = this.initHealthBar();
 
     // Chain bars
     this.chainBars = this.initChainBars();
@@ -172,18 +176,20 @@ HandFoot.Play.prototype = {
   },
   setupDifficulty: function() {
     var difficulty = {};
-    difficulty.gameDuration = 120;
-    difficulty.increaseTick = 2;
+    // difficulty.gameDuration = 120;
+    difficulty.increaseTick = 3;
 
     difficulty.minItemSpeed = 100;
-    difficulty.maxItemSpeed = 400;
+    // difficulty.maxItemSpeed = 400;
     difficulty.itemSpeed = difficulty.minItemSpeed;
-    difficulty.speedDelta = (difficulty.maxItemSpeed - difficulty.minItemSpeed) / (difficulty.gameDuration / difficulty.increaseTick);
+    // difficulty.speedDelta = (difficulty.maxItemSpeed - difficulty.minItemSpeed) / (difficulty.gameDuration / difficulty.increaseTick);
+    difficulty.speedDelta = 5;
 
-    difficulty.maxItemDelay = 1600;
-    difficulty.minItemDelay = 600;
+    difficulty.maxItemDelay = 2000;
+    // difficulty.minItemDelay = 600;
     difficulty.itemDelay = difficulty.maxItemDelay;
-    difficulty.delayDelta = (difficulty.maxItemDelay - difficulty.minItemDelay) / (difficulty.gameDuration / difficulty.increaseTick);
+    // difficulty.delayDelta = (difficulty.maxItemDelay - difficulty.minItemDelay) / (difficulty.gameDuration / difficulty.increaseTick);
+    difficulty.delayDelta = 35;
 
     difficulty.itemOffset = 800;
 
@@ -196,7 +202,7 @@ HandFoot.Play.prototype = {
   },
 
   ////////////////////////////////////////////////////
-  /////////////// controls
+  /////////////// CONTROLS
   ////////////////////////////////////////////////////
 
   initControls: function () {
@@ -221,7 +227,7 @@ HandFoot.Play.prototype = {
   },
 
   ////////////////////////////////////////////////////
-  ///////////// physics
+  ///////////// PHYSICS
   ////////////////////////////////////////////////////
 
   handleOverlap: function (playerPart, item) {
@@ -248,7 +254,49 @@ HandFoot.Play.prototype = {
   },
 
   ////////////////////////////////////////////////////
-  ///////////////// scoring
+  ///////////////// HEALTH
+  ////////////////////////////////////////////////////
+
+  initHealthBar: function () {
+    var healthBar = {};
+    healthBar.maxScale = (this.world.width - this.world.width / 6 - 12) / 16;
+    healthBar.step = healthBar.maxScale / 9;
+
+    healthBar.left = this.add.image(this.world.width / 12, this.world.height / 30, 'greenBarLeft');
+    healthBar.left.scale.setTo(1, 0.7);
+    healthBar.mid = this.add.image(healthBar.left.right, healthBar.left.top, 'greenBarMid');
+    healthBar.mid.scale.setTo(healthBar.maxScale, 0.7);
+    healthBar.right = this.add.image(healthBar.mid.right, healthBar.left.top, 'greenBarRight');
+    healthBar.right.scale.setTo(1, 0.7);
+    return healthBar;
+  },
+  decreaseHealth: function () {
+    this.health -= 10;
+
+    if(this.health === 0) this.gameOver();
+
+    this.healthBar.mid.scale.x -= this.healthBar.step;
+    this.healthBar.right.position.x = this.healthBar.mid.right;
+
+  },
+  increaseHealth: function (key) {
+    if(this.health === 100) return;
+
+    var newHealth = this.health + 10 * (this.chain[key] - 1);
+    if(newHealth >= 100) {
+      this.health = 100;
+      this.healthBar.mid.scale.x = this.healthBar.maxScale;
+      this.healthBar.right.position.x = this.healthBar.mid.right;
+    }
+    else {
+      this.health = newHealth;
+      this.healthBar.mid.scale.x += this.healthBar.step * (this.chain[key] - 1);
+      this.healthBar.right.position.x = this.healthBar.mid.right;
+    }
+  },
+
+  ////////////////////////////////////////////////////
+  ///////////////// SCORE / CHAIN
   ////////////////////////////////////////////////////
 
   scorePoints: function (playerPart) {
@@ -267,7 +315,8 @@ HandFoot.Play.prototype = {
      * called by handleOverlap
      * */
 
-    this.resetChain(playerPart.key)
+    this.resetChain(playerPart.key);
+    this.decreaseHealth();
   },
   increaseChain: function(key){
     /*
@@ -285,6 +334,7 @@ HandFoot.Play.prototype = {
       this.chainCount[key] = 1;
       if (this.chain[key] < 4) {
         this.resetChainBarLength(key);
+        this.increaseHealth(key);
       }
       else {
         this.increaseChainBarLength(key);
@@ -301,11 +351,6 @@ HandFoot.Play.prototype = {
     this.resetChainBarLength(key);
     this.chainLabel[key].text = "x1";
   },
-
-  ////////////////////////////////////////////////////
-  ///////////////// UI
-  ////////////////////////////////////////////////////
-
   initChainBars: function () {
     /*
      * called @ create
@@ -346,5 +391,14 @@ HandFoot.Play.prototype = {
      * */
      this.chainBars[key].mid.scale.x = 0;
      this.chainBars[key].right.position.x = this.chainBars[key].mid.right;
+  },
+
+  ////////////////////////////////////////////////////
+  ///////////////// GAME OVER
+  ////////////////////////////////////////////////////
+
+  gameOver: function () {
+    this.state.start('Play');
   }
+
 };
