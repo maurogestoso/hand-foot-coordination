@@ -72,9 +72,18 @@ HandFoot.Play.prototype = {
     this.physics.arcade.overlap(this.hand, this.footballs, this.handleOverlap, null, this);
     this.physics.arcade.overlap(this.foot, this.basketballs, this.handleOverlap, null, this);
     this.physics.arcade.overlap(this.foot, this.footballs, this.handleOverlap, null, this);
-    
+
     // create items
     this.dropItemsTimer();
+
+  },
+
+  render: function () {
+
+    this.game.debug.body(this.hand);
+    this.game.debug.body(this.foot);
+    this.game.debug.body(this.footballs);
+    this.game.debug.body(this.basketballs);
 
   },
 
@@ -90,6 +99,8 @@ HandFoot.Play.prototype = {
     var newPart = this.add.sprite(0, 0, key);
     this.physics.arcade.enableBody(newPart);
     newPart.body.allowGravity = false;
+    newPart.body.width = 32;
+    newPart.body.height = 48;
     newPart.anchor.setTo(0.5);
     newPart.custom = {};
     if(key === "hand"){
@@ -235,15 +246,20 @@ HandFoot.Play.prototype = {
     }
   },
   grabGoodItemTween: function (playerPart) {
-    this.add.tween(playerPart.scale)
-      .to({x: 1.15, y: 1.15}, 200)
-      .to({x: 1, y: 1}, 200)
+    this.add.tween(playerPart)
+      .to({angle: -4}, 50)
+      .to({angle: 4}, 100)
+      .to({angle: -4}, 100)
+      .to({angle: 4}, 100)
+      .to({angle: 0}, 50)
       .start();
   },
   grabBadItemTween: function (playerPart) {
-    this.add.tween(playerPart.scale)
-      .to({x: 0.95, y: 0.95}, 200)
-      .to({x: 1, y: 1}, 200)
+    this.add.tween(playerPart)
+      .to({alpha: 0}, 100)
+      .to({alpha: 1}, 100)
+      .to({alpha: 0}, 100)
+      .to({alpha: 1}, 100)
       .start();
   },
 
