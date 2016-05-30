@@ -78,14 +78,16 @@ HandFoot.Play.prototype = {
 
   },
 
-  render: function () {
+  // DEBUG
 
-    this.game.debug.body(this.hand);
-    this.game.debug.body(this.foot);
-    this.game.debug.body(this.footballs);
-    this.game.debug.body(this.basketballs);
-
-  },
+  // render: function () {
+  //
+  //   this.game.debug.body(this.hand);
+  //   this.game.debug.body(this.foot);
+  //   this.game.debug.body(this.footballs);
+  //   this.game.debug.body(this.basketballs);
+  //
+  // },
 
   ////////////////////////////////////////////////////
   /////////////// SPRITES
@@ -427,7 +429,7 @@ HandFoot.Play.prototype = {
   gameOver: function () {
     this.sound.gameOver.play();
     this.sound.music.stop();
-    this.state.start('Menu');
+    this.state.start('GameOver', true, false, this.score);
   }
 
 };

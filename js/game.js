@@ -7,6 +7,8 @@ window.onload = function() {
 	game.state.add('Menu', HandFoot.Menu);
 	game.state.add('Play', HandFoot.Play);
 	game.state.add('GameOver', HandFoot.GameOver);
+	game.state.add('EnterName', HandFoot.EnterName);
+	game.state.add('Leaderboard', HandFoot.Leaderboard);
 
 	game.state.start('Boot');
 
