@@ -21,8 +21,6 @@ HandFoot.GameOver.prototype = {
     ];
     window.localStorage.setItem('hiScores', window.localStorage.getItem('hiScores') || JSON.stringify(defaultHiScores));
     this.isHiScore = this.checkNewHighScore(newScore, window.localStorage.getItem('hiScores'));
-    console.log('New score: ' + newScore);
-    console.log('Is hiScore? ' + this.isHiScore);
   },
   create: function () {
 
