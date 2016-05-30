@@ -50,31 +50,31 @@ HandFoot.GameOver.prototype = {
         .to({alpha: 0}, 250).to({alpha: 1}, 250)
         .loop().start();
 
+      // TO LEADERBOARD
+      var hand = this.add.image(this.world.width/6, this.world.height*4/6, 'hand');
+      hand.anchor.setTo(0.5);
+      this.add.tween(hand)
+        .to({angle: 4}, 400).to({angle: -4}, 800).to({angle: 0}, 400)
+        .loop().start();
+      textStyle = { 'font': '32px Pixel', fill: 'darkblue' };
+      var toLeaderboardLabel = this.add.text(hand.right + 20, hand.position.y, "to save your score", textStyle);
+      toLeaderboardLabel.anchor.setTo(0, 0.5);
     }
 
-    // TO LEADERBOARD
-    var hand = this.add.image(this.world.width/6, this.world.height*4/6, 'hand');
-    hand.anchor.setTo(0.5);
-    this.add.tween(hand)
-      .to({angle: 4}, 400).to({angle: -4}, 800).to({angle: 0}, 400)
-      .loop().start();
-    textStyle = { 'font': '32px Pixel', fill: 'darkblue' };
-    var toLeaderboardLabel = this.add.text(hand.right + 20, hand.position.y, "to Leaderboard", textStyle);
-    toLeaderboardLabel.anchor.setTo(0, 0.5);
-
     // TO MENU
-    var foot = this.add.image(hand.position.x, this.world.height*5/6, 'foot');
+    var foot = this.add.image(this.world.width/6, this.world.height*5/6, 'foot');
     foot.anchor.setTo(0.5);
     this.add.tween(foot)
       .to({angle: -4}, 400).to({angle: 4}, 800).to({angle: 0}, 400)
       .loop().start();
+    textStyle = { 'font': '32px Pixel', fill: 'darkblue' };
     var backToMenuLabel = this.add.text(foot.right + 20, foot.position.y, "back to Main Menu", textStyle);
     backToMenuLabel.anchor.setTo(0, 0.5);
 
     // CONTROLS
     var cursor = this.input.keyboard.createCursorKeys();
-    cursor.left.onDown.add(this.toLeaderboard, this)
-    cursor.right.onDown.add(this.backToMenu, this)
+    cursor.left.onDown.add(this.toLeaderboard, this);
+    cursor.right.onDown.add(this.backToMenu, this);
 
   },
 
@@ -93,6 +93,6 @@ HandFoot.GameOver.prototype = {
         return true;
       }
       return false;
-    }, false)
+    }, false);
   }
 };
