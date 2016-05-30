@@ -427,7 +427,7 @@ HandFoot.Play.prototype = {
   gameOver: function () {
     this.sound.gameOver.play();
     this.sound.music.stop();
-    this.state.start('GameOver');
+    this.state.start('GameOver', true, false, this.score);
   }
 
 };

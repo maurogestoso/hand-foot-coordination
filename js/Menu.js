@@ -40,6 +40,6 @@ HandFoot.Menu.prototype = {
   },
 
   startGame: function () {
-    this.state.start('GameOver');
+    this.state.start('GameOver', true, false, 8000);
   }
 };
