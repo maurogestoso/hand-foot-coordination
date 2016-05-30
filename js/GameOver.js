@@ -6,6 +6,11 @@ HandFoot.GameOver = function (game) {
 
 HandFoot.GameOver.prototype = {
 
+  init: function () {
+    var highScores = [{name: 'AAA', score: 9999}, {name: 'MAU', score: 8888}];
+    window.localStorage.setItem('highScores', window.localStorage.getItem('highScores') || JSON.stringify(highScores));
+  },
+
   create: function () {
 
     this.add.tileSprite(0, 0, this.world.width, this.world.height, 'lined-paper');

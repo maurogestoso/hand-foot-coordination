@@ -1,8 +1,6 @@
 var HandFoot = HandFoot || {};
 
-HandFoot.Menu = function (game) {
-
-};
+HandFoot.Menu = function (game) {};
 
 HandFoot.Menu.prototype = {
 
@@ -42,6 +40,6 @@ HandFoot.Menu.prototype = {
   },
 
   startGame: function () {
-    this.state.start('Play');
+    this.state.start('GameOver');
   }
 };
