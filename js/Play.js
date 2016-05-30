@@ -78,14 +78,16 @@ HandFoot.Play.prototype = {
 
   },
 
-  render: function () {
+  // DEBUG
 
-    this.game.debug.body(this.hand);
-    this.game.debug.body(this.foot);
-    this.game.debug.body(this.footballs);
-    this.game.debug.body(this.basketballs);
-
-  },
+  // render: function () {
+  //
+  //   this.game.debug.body(this.hand);
+  //   this.game.debug.body(this.foot);
+  //   this.game.debug.body(this.footballs);
+  //   this.game.debug.body(this.basketballs);
+  //
+  // },
 
   ////////////////////////////////////////////////////
   /////////////// SPRITES

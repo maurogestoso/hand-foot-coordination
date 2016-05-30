@@ -5,13 +5,12 @@ HandFoot.GameOver = function (game) {
 };
 
 HandFoot.GameOver.prototype = {
-  
   init: function (newScore) {
     this.newScore = newScore;
     var defaultHiScores = [
-      {name: 'AAA', score: 9999},
-      {name: 'MAU', score: 7500},
-      {name: 'MRF', score: 5000},
+      {name: 'AWK', score: 9999},
+      {name: 'MRF', score: 7500},
+      {name: 'ANY', score: 5000},
       {name: 'MIC', score: 2000},
       {name: 'LUC', score: 1500},
       {name: 'GMI', score: 1000},
@@ -25,10 +24,11 @@ HandFoot.GameOver.prototype = {
     console.log('New score: ' + newScore);
     console.log('Is hiScore? ' + this.isHiScore);
   },
-
   create: function () {
 
     this.add.tileSprite(0, 0, this.world.width, this.world.height, 'lined-paper');
+
+    var cursor = this.input.keyboard.createCursorKeys();
 
     // GAME OVER
     var textStyle = { 'font': '64px Pixel', fill: 'darkblue', 'align': 'center' };
@@ -59,6 +59,8 @@ HandFoot.GameOver.prototype = {
       textStyle = { 'font': '32px Pixel', fill: 'darkblue' };
       var toLeaderboardLabel = this.add.text(hand.right + 20, hand.position.y, "to save your score", textStyle);
       toLeaderboardLabel.anchor.setTo(0, 0.5);
+
+      cursor.left.onDown.add(this.toLeaderboard, this);
     }
 
     // TO MENU
@@ -71,21 +73,15 @@ HandFoot.GameOver.prototype = {
     var backToMenuLabel = this.add.text(foot.right + 20, foot.position.y, "back to Main Menu", textStyle);
     backToMenuLabel.anchor.setTo(0, 0.5);
 
-    // CONTROLS
-    var cursor = this.input.keyboard.createCursorKeys();
-    cursor.left.onDown.add(this.toLeaderboard, this);
     cursor.right.onDown.add(this.backToMenu, this);
 
   },
-
   backToMenu: function () {
     this.state.start('Menu');
   },
-  
   toLeaderboard: function () {
-    this.state.start('Leaderboard', true, false, this.newScore);
+    this.state.start('EnterName', true, false, this.newScore);
   },
-
   checkNewHighScore: function (score, hiScoresJSON) {
     var hiScores = JSON.parse(hiScoresJSON);
     return hiScores.reduce(function (isHigh, highScore, index) {
@@ -94,5 +90,5 @@ HandFoot.GameOver.prototype = {
       }
       return false;
     }, false);
-  }
+  },
 };
