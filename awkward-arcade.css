@@ -1,0 +1,11 @@
+/*These bizarre styles make the game appear in the correct part of the Awkward Arcade cabinet
+built for Hand Foot Co-ordination*/
+
+body {
+  background: #000;
+}
+#gameContainer {
+  margin: 36em;
+  top: -30em;
+  height: 100vh;
+}
